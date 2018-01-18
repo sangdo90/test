@@ -1,16 +1,66 @@
 package core
 
+import (
+	"math/rand"
+	"time"
+)
+
 var GlobalBlockchains []BlockChain
 
 type BlockChain struct {
 	ID     uint64
 	Blocks []Block
+	BlockChainHeight uint64
+	GenesisBlock *Block
+	CurrentBlock *Block
 }
 
-func NewBlockChain( /*Parameters*/ ) *BlockChain {
-	return nil
+//end
+func NewGenesisBlock() *Block {
+	
+	rand.Seed(time.Now().UTC().UnixNano())
+	token := make([]byte, 32)
+	//token := new(common.Hash), token[:]
+	rand.Read(token[:])
+
+	b := &Block{
+		Header: 
+			BlockHeader{
+				PreviousHash	: SHA2Hash(token),
+				//MerkleRootHash	: GetMerkleRootHash(transactions),
+				Difficulty 		: 0,
+				Nonce 			: 0,
+				Timestamp 		: time.Now().UTC().UnixNano(),					
+				Index 			: 0,
+			},
+		Body:
+			BlockBody{
+				//Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
+			},
+	}
+
+	return b
 }
 
-func (c *BlockChain) AddBlock(b *Block) error {
+func NewBlockChain(id uint64) *BlockChain {
+	b := NewGenesisBlock()
+	bc := &BlockChain{
+		ID : id,
+		Blocks : []Block{*b},
+		BlockChainHeight : 1,
+		GenesisBlock : b,
+		CurrentBlock : b,
+	}
+	return bc
+}
+
+//target index.. 
+//-> need to changed Blockchain Struct
+//-> or, need to copy front Blockchain, then attach the block
+func (bc *BlockChain) AddBlock(b *Block) error {
+	bc.Blocks = append(bc.Blocks, *b)
+	bc.BlockChainHeight = bc.BlockChainHeight + 1
+	bc.CurrentBlock = b
+	
 	return nil
 }

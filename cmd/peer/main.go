@@ -4,15 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-
 	"github.com/smartm2m/blockchain/core"
 )
 
 // TODO : Jongseok
 func main() {
 	bc := core.NewBlockChain()
-	genesisBlock := core.NewBlock()
-	bc.AddBlock(genesisBlock)
+	//genesisBlock := core.NewBlock()
+	//bc.AddBlock(genesisBlock)
 	console()
 }
 
