@@ -1,12 +1,18 @@
 package common
 
 import (
+	"crypto/sha256"
 	"time"
 	"encoding/hex"
 	"encoding/base64"
 )
 
+type Address [20]byte
 type Hash [32]byte
+
+func SHA2Hash(b []byte) Hash {
+	return sha256.Sum256(b)
+}
 
 func MakeTimestamp() int64{
 	return time.Now().UnixNano() / int64(time.Millisecond)
@@ -47,3 +53,13 @@ func FromHex(s string) []byte {
 func StringToHash(s string) Hash { return BytesToHash([]byte(s)) }
 func HexToHash(s string) Hash    { return BytesToHash(FromHex(s)) }
 func HashToString(h Hash) string { return base64.StdEncoding.EncodeToString(h[:])}
+
+func CopyBytes(b []byte) (copiedBytes []byte) {
+	if b == nil {
+		return nil
+	}
+	copiedBytes = make([]byte, len(b))
+	copy(copiedBytes, b)
+
+	return
+}

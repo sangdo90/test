@@ -1,44 +1,47 @@
 package core
 
 import (
-	"crypto/sha256"
+	"strconv"
 	"../common"
-
+	"bytes"
 //	"github.com/smartm2m/blockchain/common"
 )
 
 type BlockHeader struct {
-	PreviousHash common.Hash
-	MerkleRootHash common.Hash
-	Difficulty uint64
-	Nonce uint64
-	Timestamp int64
-	Index uint64
+	PreviousHash 	common.Hash
+	MerkleRootHash	common.Hash
+	Difficulty		uint64
+	Nonce			uint64
+	Timestamp		int64
+	Index			uint64
 }
 
 type BlockBody struct {
-	Transactions []Transaction
+	Transactions *Transaction
 }
 
 type Block struct {
-	Header BlockHeader
-	Body BlockBody
+	Header	BlockHeader
+	Body	BlockBody
 }
 
-func SHA2Hash(b []byte) [32]byte {
-	return sha256.Sum256(b)
-}
+func BlockHeaderHash(bh BlockHeader) common.Hash{
+	var buffer bytes.Buffer	
+	buffer.WriteString(common.HashToString(bh.PreviousHash))
+	buffer.WriteString(common.HashToString(bh.MerkleRootHash))
+	buffer.WriteString(strconv.Itoa(int(bh.Difficulty)))
+	buffer.WriteString(strconv.Itoa(int(bh.Nonce)))
+	buffer.WriteString(strconv.Itoa(int(bh.Timestamp)))
+	buffer.WriteString(strconv.Itoa(int(bh.Index)))
 
-func BlockHash(b *Block) common.Hash{
-	//dummy
-	token := make([]byte, 32)
-	return SHA2Hash(token)
+	var s = common.StringToHash(buffer.String())
+	return common.SHA2Hash(s[:])
 }
 
 func GetMerkleRootHash(t *Transaction) common.Hash {
 	//
 	//
-	return SHA2Hash(nil)
+	return common.SHA2Hash(nil)
 }
 
 //cb = currnet block, The name needs to be changed
@@ -46,10 +49,10 @@ func NewBlock(cb *Block, t *Transaction) *Block {
 	b := &Block{
 		Header: 
 			BlockHeader{
-				PreviousHash	: BlockHash(cb),
+				PreviousHash	: BlockHeaderHash(cb.Header),
 				//MerkleRootHash	: GetMerkleRootHash(t),
-				Difficulty 		: 0,
-				Nonce 			: 0,
+				Difficulty 		: 0, // need to static variable diff
+				Nonce 			: 0, // need to static variable nonce
 				Timestamp 		: common.MakeTimestamp(),					
 				Index 			: cb.Header.Index + 1,
 			},
@@ -62,5 +65,9 @@ func NewBlock(cb *Block, t *Transaction) *Block {
 }
 
 func (b *Block) AddTransaction(t *Transaction) error {
+
+
+	// NewTransaction(from uint64, to *common.Address, amount uint64, data []byte)
+	// return &Transaction
 	return nil
 }

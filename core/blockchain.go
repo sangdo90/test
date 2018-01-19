@@ -3,34 +3,36 @@ package core
 import (
 	"math/rand"
 	"time"
+	"../common"
 )
 
 var GlobalBlockchains []BlockChain
 
 type BlockChain struct {
-	ID     uint64
-	Blocks []Block
-	BlockChainHeight uint64
-	GenesisBlock *Block
-	CurrentBlock *Block
+	ID    			 	uint64
+	Blocks 				[]Block
+	BlockChainHeight	uint64
+	GenesisBlock 		*Block
+	CurrentBlock		*Block
 }
 
 //end
 func NewGenesisBlock() *Block {
 	
 	rand.Seed(time.Now().UTC().UnixNano())
-	token := make([]byte, 32)
-	//token := new(common.Hash), token[:]
+	//token := make([]byte, 32)
+	//rand.Read(token)
+	token := new(common.Hash)
 	rand.Read(token[:])
 
 	b := &Block{
 		Header: 
 			BlockHeader{
-				PreviousHash	: SHA2Hash(token),
+				PreviousHash	: common.SHA2Hash(token[:]),
 				//MerkleRootHash	: GetMerkleRootHash(transactions),
 				Difficulty 		: 0,
 				Nonce 			: 0,
-				Timestamp 		: time.Now().UTC().UnixNano(),					
+				Timestamp 		: common.MakeTimestamp(),					
 				Index 			: 0,
 			},
 		Body:
