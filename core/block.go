@@ -17,7 +17,7 @@ type BlockHeader struct {
 }
 
 type BlockBody struct {
-	Transactions *Transaction
+	Transactions []*Transaction
 }
 
 type Block struct {
@@ -65,9 +65,6 @@ func NewBlock(cb *Block, t *Transaction) *Block {
 }
 
 func (b *Block) AddTransaction(t *Transaction) error {
-
-
-	// NewTransaction(from uint64, to *common.Address, amount uint64, data []byte)
-	// return &Transaction
+	b.Body.Transactions = append(b.Body.Transactions, t)
 	return nil
 }
