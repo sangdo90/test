@@ -12,4 +12,5 @@ func NewBlock( /*Parameters*/ ) *Block {
 }
 
 func (b *Block) AddTransaction(t *Transaction) error {
+	return nil
 }
