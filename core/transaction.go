@@ -1,18 +1,18 @@
 package core
 
 import (
-	"../common"
+	"github.com/smartm2m/blockchain/common"
 )
 
-type txdata struct{
-	Recipient 	*common.Address
-	Amount		uint64
-	Payload 	[]byte
+type txdata struct {
+	Recipient *common.Address
+	Amount    uint64
+	Payload   []byte
 }
 
 type Transaction struct {
-	ID   		uint64
-	Data		txdata
+	ID   uint64
+	Data txdata
 }
 
 func NewTransaction(from uint64, to *common.Address, amount uint64, data []byte) *Transaction {
@@ -20,9 +20,9 @@ func NewTransaction(from uint64, to *common.Address, amount uint64, data []byte)
 		data = common.CopyBytes(data)
 	}
 	d := txdata{
-		Recipient:	to,
-		Payload:    data,
-		Amount:		amount,
+		Recipient: to,
+		Payload:   data,
+		Amount:    amount,
 	}
 	return &Transaction{ID: from, Data: d}
 }
