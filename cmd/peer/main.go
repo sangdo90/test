@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/smartm2m/blockchain/core"
+	"github.com/smartm2m/blockchain/execute"
 	"github.com/smartm2m/chainutil/console"
 	"github.com/smartm2m/chainutil/console/command"
 	"github.com/smartm2m/chainutil/log"
@@ -23,6 +24,8 @@ func main() {
 
 // RegisterCommand register commands for manage blockchains.
 func RegisterCommand() {
+	execute.BlockchainCommands()
+	execute.ConsensusCommands()
 	_ = command.AddCommand("", command.Command{
 		Name:        "quit",
 		Description: "Exit the program",
