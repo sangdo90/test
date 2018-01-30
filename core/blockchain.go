@@ -8,135 +8,144 @@ import (
 	"time"
 
 	"github.com/smartm2m/blockchain/common"
-	"github.com/smartm2m/chainutil/console"
 )
 
-//GlobalBlockChains is set of all block chains.
-var GlobalBlockChains []BlockChain
+// GlobalBlockchains is set of all blockchains.
+var GlobalBlockchains []Blockchain
 
-//GlobalBlockChainsLength is Length of GlobalBlockchains
-var GlobalBlockChainsLength uint64
+// LongestBlockchainID is the longest blockchain's id among the blockchains.
+// init value is 0
+var LongestBlockchainID uint64
 
-//BlockChain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
-//ID is the same as index+1
-type BlockChain struct {
+// GlobalBlockchainsLength is length of GlobalBlockchains.
+var GlobalBlockchainsLength uint64
+
+// Blockchain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
+// ID is the same as index+1
+type Blockchain struct {
 	ID               uint64
 	Blocks           []Block
-	BlockChainHeight uint64
+	BlockchainHeight uint64
 	GenesisBlock     *Block
-	CurrentBlock     *Block
+	CandidateBlock   *Block
 }
 
-//SetSeedUsingTime sets the seed using time.
+// SetSeedUsingTime sets the seed using time.
 func SetSeedUsingTime() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-//NewGenesisBlock creates genesis block.
+// NewGenesisBlock creates genesis block.
 func NewGenesisBlock() *Block {
 	SetSeedUsingTime()
-	//token := make([]byte, 32)
-	//rand.Read(token)
+	// token := make([]byte, 32)
+	// rand.Read(token)
 	token := new(common.Hash)
 	rand.Read(token[:])
 
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: common.SHA2Hash(token[:]),
-			//MerkleRootHash	: GetMerkleRootHash(transactions),
+			// MerkleRootHash	: GetMerkleRootHash(transactions),
 			Difficulty: 0,
 			Nonce:      0,
 			Timestamp:  common.MakeTimestamp(),
 			Index:      0,
 		},
 		Body: BlockBody{
-		//Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
+		// Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
 		},
 	}
 
 	return b
 }
 
-//SelectBlockChain returns blockchain that has the input id.
-func SelectBlockChain(id uint64) (*BlockChain, error) {
-	if id == 0 || id > GlobalBlockChainsLength {
-		return nil, errors.New("Invalid Select Blockchain")
-	}
-	return &GlobalBlockChains[id-1], nil
+// GetLongestBlockchain gets longest Blockchain.
+func GetLongestBlockchain() *Blockchain {
+	glb, _ := SelectBlockchain(LongestBlockchainID)
+	return glb
 }
 
-//RegisterBlockChain registers in the global blockchain.
-//It should always be called when creating a new blockchain(including when cutting).
-func (bc *BlockChain) RegisterBlockChain() error {
-	GlobalBlockChains = append(GlobalBlockChains, *bc)
-	GlobalBlockChainsLength = GlobalBlockChainsLength + 1
-	bc.ID = GlobalBlockChainsLength
+// SelectBlockchain returns blockchain that has the input id.
+func SelectBlockchain(bcid uint64) (*Blockchain, error) {
+	if GlobalBlockchainsLength == 0 {
+		return nil, errors.New("Blockchain is not exist")
+	}
+
+	if bcid == 0 || bcid > GlobalBlockchainsLength {
+		return nil, errors.New("Invalid Select Blockchain")
+	}
+
+	return &GlobalBlockchains[bcid-1], nil
+}
+
+// LongestBlockchainUpdate updates the longest block chain's id(global variable, LongestBlockchainID).
+func LongestBlockchainUpdate(bc *Blockchain) error {
+	lbc, _ := SelectBlockchain(LongestBlockchainID)
+
+	if lbc.ID != bc.ID && lbc.BlockchainHeight < bc.BlockchainHeight {
+		LongestBlockchainID = bc.ID
+	}
 
 	return nil
 }
 
-//CutBlockChain cuts blockchain.
-func CutBlockChain(bc BlockChain, idx uint64) *BlockChain {
-	bc.ID = 0 //init value
-	bc.Blocks = bc.Blocks[:idx]
-	bc.BlockChainHeight = idx
-	bc.CurrentBlock = &bc.Blocks[idx]
-
-	return &bc
+// RegisterBlockchain registers in the global blockchain.
+// It should always be called when creating a new blockchain(including when cutting).
+func (bc *Blockchain) RegisterBlockchain() error {
+	GlobalBlockchains = append(GlobalBlockchains, *bc)
+	GlobalBlockchainsLength = GlobalBlockchainsLength + 1
+	bc.ID = GlobalBlockchainsLength
+	return nil
 }
 
-//NewBlockChain creates blockchain.
-func NewBlockChain() *BlockChain {
-	b := NewGenesisBlock()
+// CopyBlockchain copies blockchain.
+func CopyBlockchain(bc Blockchain) error {
+	nbc := bc
+	nbc.RegisterBlockchain()
+	return nil
+}
 
-	bc := &BlockChain{
-		ID:               0, //init value
+// NewBlockchain creates blockchain.
+func NewBlockchain() *Blockchain {
+	b := NewGenesisBlock()
+	cb := NewBlock(b)
+	bc := &Blockchain{
+		ID:               0, // init value
 		Blocks:           []Block{*b},
-		BlockChainHeight: 1, //uint64(len([]Block{*b})), //always 1
+		BlockchainHeight: 1, // uint64(len([]Block{*b})), // always 1
 		GenesisBlock:     b,
-		CurrentBlock:     b,
+		CandidateBlock:   cb,
 	}
 	return bc
 }
 
-//AddBlock adds a block to blockchain.
-func (bc *BlockChain) AddBlock(blk console.Blocker) error {
-	b, ok := blk.Block().(*Block)
-	if !ok {
-		return errors.New("Invalid block")
-	}
-	bc.Blocks = append(bc.Blocks, *b)
-	bc.BlockChainHeight = bc.BlockChainHeight + 1
-	bc.CurrentBlock = b
-
+// AddBlock adds a block to blockchain.
+func (bc *Blockchain) AddBlock() error {
+	bc.Blocks = append(bc.Blocks, *bc.CandidateBlock)
+	bc.BlockchainHeight = bc.BlockchainHeight + 1
+	bc.CandidateBlock = NewBlock(bc.CandidateBlock)
+	LongestBlockchainUpdate(bc)
 	return nil
 }
 
 // Block (n int) returns the n-th block.
-// TODO: Getting the last block from a blockchain
-// TODO: Getting the i-th block.
-func (bc *BlockChain) Block(n int) console.Blocker {
-	if n < 0 || n >= len(bc.Blocks) || len(bc.Blocks) < 1 {
+func (bc *Blockchain) Block(n uint64) *Block {
+	blockLength := uint64(len(bc.Blocks))
+	if n < 0 || n >= blockLength || blockLength < 1 {
 		return nil
 	}
 
 	return &bc.Blocks[n]
 }
 
-//String (blockchain) function provides information about the blockchain.
+// String (blockchain) function provides information about the blockchain.
 // TODO: Convert to string from a blockchain
-func (bc *BlockChain) String() string {
+func (bc *Blockchain) String() string {
 	res := bytes.NewBuffer([]byte{})
 	fmt.Fprintf(res, "ID     %v\n", bc.ID)
-	fmt.Fprintf(res, "Height %v\n", bc.BlockChainHeight)
-	fmt.Fprintf(res, "Blocks: \n")
-	fmt.Fprintln(res, "-----------------------------------------------------")
-	for i, b := range bc.Blocks {
-		fmt.Fprintf(res, "%v-th Block: \n", i)
-		fmt.Fprintf(res, "%s", b.String())
-		fmt.Fprintln(res, "")
-	}
-	fmt.Fprintln(res, "-----------------------------------------------------")
-
+	fmt.Fprintf(res, "Height %v\n", bc.BlockchainHeight)
+	fmt.Fprintf(res, "Genesis Block %v\n", bc.GenesisBlock.String())
+	fmt.Fprintf(res, "Candidate Block %v\n", bc.CandidateBlock.String())
 	return res.String()
 }
