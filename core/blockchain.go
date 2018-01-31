@@ -147,6 +147,5 @@ func (bc *Blockchain) String() string {
 	fmt.Fprintf(res, "Height %v\n", bc.BlockchainHeight)
 	fmt.Fprintf(res, "Genesis Block %v\n", bc.GenesisBlock.String())
 	fmt.Fprintf(res, "Candidate Block %v\n", bc.CandidateBlock.String())
-	fmt.Fprintf(res, "test")
 	return res.String()
 }

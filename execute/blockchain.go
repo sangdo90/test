@@ -3,6 +3,7 @@ package execute
 import (
 	"bytes"
 	"errors"
+	"strconv"
 
 	"github.com/smartm2m/blockchain/common"
 	"github.com/smartm2m/blockchain/core"
@@ -158,6 +159,7 @@ func AddTransactionToCandidateBlock(args []string) error {
 
 	t := core.NewTransaction(from, &to, amount)
 	bc.CandidateBlock.AddTransaction(t)
+
 	return nil
 }
 
@@ -178,6 +180,7 @@ func NewBlock(args []string) error {
 	}
 
 	bc.CandidateBlock = core.NewBlock(core.GetLastestBlock(bcid))
+
 	return nil
 }
 
@@ -187,6 +190,7 @@ func NewBlockchain(args []string) error {
 	log.Debug("Create New Blockchain")
 	bc := core.NewBlockchain()
 	bc.RegisterBlockchain()
+
 	return nil
 }
 
@@ -207,6 +211,7 @@ func AttachBlockToBlockchain(args []string) error {
 	}
 
 	bc.AddBlock()
+	log.Debug("Attach complete")
 	return nil
 }
 
@@ -311,8 +316,9 @@ func ShowBlocksList(args []string) error {
 	var buffer bytes.Buffer
 	buffer.WriteString(bc.String())
 	for idx, b := range bc.Blocks {
+		i := strconv.Itoa(idx)
 		buffer.WriteString("-----------------------------------------------------\n")
-		buffer.WriteString(string(idx) + "-th Block: \n")
+		buffer.WriteString(i + "-th Block: \n")
 		buffer.WriteString(b.String() + "\n")
 		buffer.WriteString("-----------------------------------------------------\n")
 	}

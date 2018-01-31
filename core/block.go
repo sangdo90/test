@@ -58,11 +58,7 @@ func GetLastestBlock(bcid uint64) *Block {
 
 // NewBlock creates a new block.
 func NewBlock(blk console.Blocker) *Block {
-<<<<<<< HEAD
 	pb, ok := blk.Block().(*Block)
-=======
-	bb, ok := blk.Block().(*Block)
->>>>>>> 3498b7b3eca80b39fc2ab47b0a8596d40667c70e
 
 	if !ok {
 		return nil
@@ -70,21 +66,12 @@ func NewBlock(blk console.Blocker) *Block {
 
 	b := &Block{
 		Header: BlockHeader{
-<<<<<<< HEAD
 			PreviousHash: BlockHeaderHash(pb.Header),
 			//MerkleRootHash: GetMerkleRootHash(t),
 			Difficulty: 0, // need to static variable diff
 			Nonce:      0, // need to static variable nonce
 			Timestamp:  common.MakeTimestamp(),
 			Index:      pb.Header.Index + 1,
-=======
-			PreviousHash: BlockHeaderHash(bb.Header),
-			//MerkleRootHash	: GetMerkleRootHash(t),
-			Difficulty: 0, // need to static variable diff
-			Nonce:      0, // need to static variable nonce
-			Timestamp:  common.MakeTimestamp(),
-			Index:      bb.Header.Index + 1,
->>>>>>> 3498b7b3eca80b39fc2ab47b0a8596d40667c70e
 		},
 		Body: BlockBody{
 			Transactions: nil,
