@@ -93,15 +93,9 @@ func LongestBlockchainUpdate(bc *Blockchain) error {
 // RegisterBlockchain registers in the global blockchain.
 // It should always be called when creating a new blockchain(including when cutting).
 func (bc *Blockchain) RegisterBlockchain() error {
-<<<<<<< HEAD
 	GlobalBlockchainsLength = GlobalBlockchainsLength + 1
 	bc.ID = GlobalBlockchainsLength
 	GlobalBlockchains = append(GlobalBlockchains, *bc)
-=======
-	GlobalBlockchains = append(GlobalBlockchains, *bc)
-	GlobalBlockchainsLength = GlobalBlockchainsLength + 1
-	bc.ID = GlobalBlockchainsLength
->>>>>>> 3498b7b3eca80b39fc2ab47b0a8596d40667c70e
 	return nil
 }
 
@@ -149,17 +143,10 @@ func (bc *Blockchain) Block(n uint64) *Block {
 // TODO: Convert to string from a blockchain
 func (bc *Blockchain) String() string {
 	res := bytes.NewBuffer([]byte{})
-<<<<<<< HEAD
 	fmt.Fprintf(res, "\nID     %v\n", bc.ID)
 	fmt.Fprintf(res, "Height %v\n", bc.BlockchainHeight)
 	fmt.Fprintf(res, "Genesis Block %v\n", bc.GenesisBlock.String())
 	fmt.Fprintf(res, "Candidate Block %v\n", bc.CandidateBlock.String())
 	fmt.Fprintf(res, "test")
-=======
-	fmt.Fprintf(res, "ID     %v\n", bc.ID)
-	fmt.Fprintf(res, "Height %v\n", bc.BlockchainHeight)
-	fmt.Fprintf(res, "Genesis Block %v\n", bc.GenesisBlock.String())
-	fmt.Fprintf(res, "Candidate Block %v\n", bc.CandidateBlock.String())
->>>>>>> 3498b7b3eca80b39fc2ab47b0a8596d40667c70e
 	return res.String()
 }

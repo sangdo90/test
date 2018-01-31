@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unsafe"
 )
 
 // Address is type of transaction address(20 bytes)
@@ -81,13 +80,8 @@ func FromHex(s string) []byte {
 
 // StringToUint64 converts string to uint64
 func StringToUint64(s string) uint64 {
-<<<<<<< HEAD
 	u, _ := strconv.ParseUint(s, 10, 64)
 	return u
-=======
-	u, _ := strconv.ParseUint(s, 0, 64)
-	return *(*uint64)(unsafe.Pointer(uintptr(u)))
->>>>>>> 3498b7b3eca80b39fc2ab47b0a8596d40667c70e
 }
 
 // StringToAddress converts string to address
