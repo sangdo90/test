@@ -9,7 +9,7 @@ import (
 	"github.com/smartm2m/chainutil/console"
 )
 
-//A BlockHeader is the header of block, which contains the information of the block.
+// A BlockHeader is the header of block, which contains the information of the block.
 type BlockHeader struct {
 	PreviousHash   common.Hash
 	MerkleRootHash common.Hash
@@ -19,18 +19,18 @@ type BlockHeader struct {
 	Index          uint64
 }
 
-//A BlockBody is the body of block, which contains transactions.
+// A BlockBody is the body of block, which contains transactions.
 type BlockBody struct {
 	Transactions []*Transaction
 }
 
-//A Block is an element of blockchain, consisting of block header and block body.
+// A Block is an element of blockchain, consisting of block header and block body.
 type Block struct {
 	Header BlockHeader
 	Body   BlockBody
 }
 
-//BlockHeaderHash computes the hash value of the block header.
+// BlockHeaderHash computes the hash value of the block header.
 func BlockHeaderHash(bh BlockHeader) common.Hash {
 	var buffer bytes.Buffer
 	buffer.WriteString(common.HashToString(bh.PreviousHash))
@@ -44,15 +44,21 @@ func BlockHeaderHash(bh BlockHeader) common.Hash {
 	return common.SHA2Hash(s[:])
 }
 
-//GetMerkleRootHash is ...
+// GetMerkleRootHash is ...
 func GetMerkleRootHash(t *Transaction) common.Hash {
 	return common.SHA2Hash(nil)
 }
 
-//NewBlock creates a new block.
-//cb = current block, The name needs to be changed.
+// GetLastestBlock gest lastest block in blockchain identified by a ID.
+// Therefore, GetLastestBlock requires a blockchain ID.
+func GetLastestBlock(bcid uint64) *Block {
+	bc, _ := SelectBlockchain(bcid)
+	return &bc.Blocks[bc.BlockchainHeight-1]
+}
+
+// NewBlock creates a new block.
 func NewBlock(blk console.Blocker) *Block {
-	cb, ok := blk.Block().(*Block)
+	pb, ok := blk.Block().(*Block)
 
 	if !ok {
 		return nil
@@ -60,29 +66,34 @@ func NewBlock(blk console.Blocker) *Block {
 
 	b := &Block{
 		Header: BlockHeader{
-			PreviousHash: BlockHeaderHash(cb.Header),
-			//MerkleRootHash	: GetMerkleRootHash(t),
+			PreviousHash: BlockHeaderHash(pb.Header),
+			//MerkleRootHash: GetMerkleRootHash(t),
 			Difficulty: 0, // need to static variable diff
 			Nonce:      0, // need to static variable nonce
 			Timestamp:  common.MakeTimestamp(),
-			Index:      cb.Header.Index + 1,
+			Index:      pb.Header.Index + 1,
 		},
 		Body: BlockBody{
-		//Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
+			Transactions: nil,
 		},
 	}
 	return b
 }
 
-//AddTransaction adds a transaction.
+// AddTransaction adds a transaction.
 func (b *Block) AddTransaction(t *Transaction) error {
 	b.Body.Transactions = append(b.Body.Transactions, t)
 	return nil
 }
 
-//Block function is an interface function that returns a block.
+// Block function is an interface function that returns a block.
 func (b *Block) Block() interface{} {
 	return b
+}
+
+// BlockTransactions returns all transactions of block
+func (b *Block) BlockTransactions() []*Transaction {
+	return b.Body.Transactions
 }
 
 //String (block) function provides information about the block.
