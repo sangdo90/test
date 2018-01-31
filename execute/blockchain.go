@@ -127,8 +127,8 @@ func BlockchainCommands() {
 		Run:         ShowBlockchainInformation,
 	})
 
-	_ = command.AddCommand("blockchain", command.Command{
-		Name:        "info all",
+	_ = command.AddCommand("blockchain info", command.Command{
+		Name:        "all",
 		Description: "show blockchains Information All",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
@@ -209,9 +209,8 @@ func AttachBlockToBlockchain(args []string) error {
 	if err != nil {
 		return err
 	}
-
 	bc.AddBlock()
-	log.Debug("Attach complete")
+	log.Debug("Attach completed")
 	return nil
 }
 
@@ -224,7 +223,7 @@ func ShowCandidateBlockTransactionsList(args []string) error {
 		return errors.New("Incorrect parameters")
 	}
 
-	log.Debug("Blockchain ID : " + args[0])
+	log.Debug("Blockchain ID : " + args[0] + "\n")
 	bcid := common.StringToUint64(args[0])
 	bc, err := core.SelectBlockchain(bcid)
 
@@ -236,9 +235,11 @@ func ShowCandidateBlockTransactionsList(args []string) error {
 	var buffer bytes.Buffer
 	buffer.WriteString(b.String())
 	buffer.WriteString("-----------------------------------------------------\n")
-	buffer.WriteString("0\tFrom\tTo\tAmount\n")
+	buffer.WriteString("Num\tFrom\tTo\tAmount\n")
 	for idx, t := range ts {
-		buffer.WriteString(string(idx) + t.String())
+		i := strconv.Itoa(idx)
+		buffer.WriteString(i)
+		buffer.WriteString(t.String())
 	}
 	buffer.WriteString("-----------------------------------------------------\n")
 
@@ -258,9 +259,14 @@ func ShowBlockInformation(args []string) error {
 	log.Debug("Block index : " + args[1] + "\n")
 	bcid := common.StringToUint64(args[0])
 	bidx := common.StringToUint64(args[1])
+
 	bc, err := core.SelectBlockchain(bcid)
 	if err != nil {
 		return nil
+	}
+
+	if bidx > bc.BlockchainHeight-1 {
+		return errors.New("Incorrect block index")
 	}
 
 	log.Debug(bc.Block(bidx).String())
@@ -279,6 +285,11 @@ func ShowBlockTransactionsList(args []string) error {
 	bidx := common.StringToUint64(args[1])
 
 	bc, err := core.SelectBlockchain(bcid)
+
+	if bidx > bc.BlockchainHeight-1 {
+		return errors.New("Incorrect block index")
+	}
+
 	b := bc.Block(bidx)
 	ts := b.BlockTransactions()
 	if err != nil {
@@ -367,11 +378,12 @@ func ShowBlockchainInformation(args []string) error {
 func ShowBlockchainsInformationAll(args []string) error {
 	log.Debug("Show Blockchains Information All")
 	var idx uint64
-	var buffer bytes.Buffer
+	log.Debug("-----------------------------------------------------\n")
 	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
 		bc := core.GlobalBlockchains[idx]
-		buffer.WriteString(bc.String())
+		log.Debug(bc.String())
+		log.Debug("-----------------------------------------------------\n")
 	}
-	log.Debug(buffer)
+
 	return nil
 }

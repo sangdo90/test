@@ -68,11 +68,15 @@ func GetLongestBlockchain() *Blockchain {
 
 // SelectBlockchain returns blockchain that has the input id.
 func SelectBlockchain(bcid uint64) (*Blockchain, error) {
+	if bcid == 0 {
+		bcid = 1
+	}
+
 	if GlobalBlockchainsLength == 0 {
 		return nil, errors.New("Blockchain is not exist")
 	}
 
-	if bcid == 0 || bcid > GlobalBlockchainsLength {
+	if bcid > GlobalBlockchainsLength {
 		return nil, errors.New("Invalid Select Blockchain")
 	}
 
@@ -83,7 +87,7 @@ func SelectBlockchain(bcid uint64) (*Blockchain, error) {
 func LongestBlockchainUpdate(bc *Blockchain) error {
 	lbc, _ := SelectBlockchain(LongestBlockchainID)
 
-	if lbc.ID != bc.ID && lbc.BlockchainHeight < bc.BlockchainHeight {
+	if lbc.BlockchainHeight < bc.BlockchainHeight {
 		LongestBlockchainID = bc.ID
 	}
 
@@ -144,8 +148,8 @@ func (bc *Blockchain) Block(n uint64) *Block {
 func (bc *Blockchain) String() string {
 	res := bytes.NewBuffer([]byte{})
 	fmt.Fprintf(res, "\nID     %v\n", bc.ID)
-	fmt.Fprintf(res, "Height %v\n", bc.BlockchainHeight)
-	fmt.Fprintf(res, "Genesis Block %v\n", bc.GenesisBlock.String())
-	fmt.Fprintf(res, "Candidate Block %v\n", bc.CandidateBlock.String())
+	fmt.Fprintf(res, "Height %v\n\n", bc.BlockchainHeight)
+	fmt.Fprintf(res, "Genesis Block \n%v\n", bc.GenesisBlock.String())
+	fmt.Fprintf(res, "Candidate Block \n%v", bc.CandidateBlock.String())
 	return res.String()
 }
