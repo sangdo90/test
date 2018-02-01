@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/blockchain/execute"
 	"github.com/smartm2m/chainutil/console"
 	"github.com/smartm2m/chainutil/console/command"
@@ -10,22 +9,20 @@ import (
 
 // TODO : Jongseok
 func main() {
-	bc := core.NewBlockChain()
-
+	//bc := core.AppendBlockchain()
 	// TODO: Using a blockchain
-	_ = bc
+	//_ = bc
 
 	log.SetLogLevel(log.DebugLogLevel)
-	console.RegisterBlockchain(bc, core.NewBlockChain)
-	console.RegisterBlock(core.NewBlock)
+	//console.RegisterBlockchain(bc, core.AppendBlockchain)
+	//console.RegisterBlock(core.NewBlock)
+	execute.BlockchainCommands()
 	RegisterCommand()
 	console.Start()
 }
 
 // RegisterCommand register commands for manage blockchains.
 func RegisterCommand() {
-	execute.BlockchainCommands()
-	execute.ConsensusCommands()
 	_ = command.AddCommand("", command.Command{
 		Name:        "quit",
 		Description: "Exit the program",
