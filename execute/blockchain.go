@@ -152,7 +152,7 @@ func NewBlockchain(args []string) error {
 	log.Debug("Create New Blockchain")
 	log.Debug(common.PerforatedLine)
 
-	bc := core.NewBlockchain()
+	bc := core.AppendBlockchain()
 	bc.RegisterBlockchain()
 	log.Debug("Create completed")
 
@@ -165,10 +165,9 @@ func ShowBlockchainsList(args []string) error {
 	log.Debug("Show Blockchains List")
 	log.Debug(common.PerforatedLine)
 
-	var idx uint64
 	var blockchainsList []uint64
-	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
-		blockchainsList = append(blockchainsList, core.GlobalBlockchains[idx].ID)
+	for _, bc := range core.GlobalBlockchains {
+		blockchainsList = append(blockchainsList, bc.ID)
 	}
 
 	log.Debug(common.Uint64ArrayToString(blockchainsList, ", "))
@@ -207,9 +206,7 @@ func ShowBlockchainsInformationAll(args []string) error {
 	log.Debug("Show Blockchains Information All")
 	log.Debug(common.PerforatedLine)
 
-	var idx uint64
-	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
-		bc := core.GlobalBlockchains[idx]
+	for _, bc := range core.GlobalBlockchains {
 		log.Debug(bc.String())
 		log.Debug(common.PerforatedLine)
 	}

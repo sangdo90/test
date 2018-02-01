@@ -11,14 +11,10 @@ import (
 )
 
 // GlobalBlockchains is set of all blockchains.
-var GlobalBlockchains []Blockchain
+var GlobalBlockchains []*Blockchain
 
-// LongestBlockchainID is the longest blockchain's id among the blockchains.
-// init value is 0
-var LongestBlockchainID uint64
-
-// GlobalBlockchainsLength is length of GlobalBlockchains.
-var GlobalBlockchainsLength uint64
+// ChainsID is length of GlobalBlockchains.
+var ChainsID uint64
 
 // Blockchain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
 // ID is the same as index+1
@@ -60,58 +56,34 @@ func NewGenesisBlock() *Block {
 	return b
 }
 
-// GetLongestBlockchain gets longest Blockchain.
-func GetLongestBlockchain() *Blockchain {
-	glb, _ := SelectBlockchain(LongestBlockchainID)
-	return glb
-}
-
 // SelectBlockchain returns blockchain that has the input id.
 func SelectBlockchain(bcid uint64) (*Blockchain, error) {
 	if bcid == 0 {
 		bcid = 1
 	}
 
-	if GlobalBlockchainsLength == 0 {
+	if GlobalBlockchains == nil {
 		return nil, errors.New("Blockchain is not exist")
 	}
 
-	if bcid > GlobalBlockchainsLength {
+	if bcid > ChainsID {
 		return nil, errors.New("Invalid Select Blockchain")
 	}
 
-	return &GlobalBlockchains[bcid-1], nil
-}
-
-// LongestBlockchainUpdate updates the longest block chain's id(global variable, LongestBlockchainID).
-func LongestBlockchainUpdate(bc *Blockchain) error {
-	lbc, _ := SelectBlockchain(LongestBlockchainID)
-
-	if lbc.BlockchainHeight < bc.BlockchainHeight {
-		LongestBlockchainID = bc.ID
-	}
-
-	return nil
+	return GlobalBlockchains[bcid-1], nil
 }
 
 // RegisterBlockchain registers in the global blockchain.
 // It should always be called when creating a new blockchain(including when cutting).
 func (bc *Blockchain) RegisterBlockchain() error {
-	GlobalBlockchainsLength = GlobalBlockchainsLength + 1
-	bc.ID = GlobalBlockchainsLength
-	GlobalBlockchains = append(GlobalBlockchains, *bc)
+	ChainsID = ChainsID + 1
+	bc.ID = ChainsID
+	GlobalBlockchains = append(GlobalBlockchains, bc)
 	return nil
 }
 
-// CopyBlockchain copies blockchain.
-func CopyBlockchain(bc Blockchain) error {
-	nbc := bc
-	nbc.RegisterBlockchain()
-	return nil
-}
-
-// NewBlockchain creates blockchain.
-func NewBlockchain() *Blockchain {
+// AppendBlockchain creates blockchain.
+func AppendBlockchain() *Blockchain {
 	b := NewGenesisBlock()
 	cb := NewBlock(b)
 	bc := &Blockchain{
@@ -129,11 +101,10 @@ func (bc *Blockchain) AddBlock() error {
 	bc.Blocks = append(bc.Blocks, *bc.CandidateBlock)
 	bc.BlockchainHeight = bc.BlockchainHeight + 1
 	bc.CandidateBlock = NewBlock(bc.CandidateBlock)
-	LongestBlockchainUpdate(bc)
 	return nil
 }
 
-// Block (n int) returns the n-th block.
+// Block (n uint64) returns the n-th block.
 func (bc *Blockchain) Block(n uint64) *Block {
 	blockLength := uint64(len(bc.Blocks))
 	if n < 0 || n >= blockLength || blockLength < 1 {

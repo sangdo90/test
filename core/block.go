@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/smartm2m/blockchain/common"
-	"github.com/smartm2m/chainutil/console"
 )
 
 // A BlockHeader is the header of block, which contains the information of the block.
@@ -35,17 +34,17 @@ func BlockHeaderHash(bh BlockHeader) common.Hash {
 	var buffer bytes.Buffer
 	buffer.WriteString(common.HashToString(bh.PreviousHash))
 	buffer.WriteString(common.HashToString(bh.MerkleRootHash))
-	buffer.WriteString(strconv.Itoa(int(bh.Difficulty)))
-	buffer.WriteString(strconv.Itoa(int(bh.Nonce)))
-	buffer.WriteString(strconv.Itoa(int(bh.Timestamp)))
-	buffer.WriteString(strconv.Itoa(int(bh.Index)))
+	buffer.WriteString(strconv.FormatUint(bh.Difficulty, 10))
+	buffer.WriteString(strconv.FormatUint(bh.Nonce, 10))
+	buffer.WriteString(strconv.FormatInt(bh.Timestamp, 10))
+	buffer.WriteString(strconv.FormatUint(bh.Index, 10))
 
 	var s = common.StringToHash(buffer.String())
 	return common.SHA2Hash(s[:])
 }
 
-// GetMerkleRootHash is ...
-func GetMerkleRootHash(t *Transaction) common.Hash {
+// MerkleRootHash is ...
+func MerkleRootHash(t *Transaction) common.Hash {
 	return common.SHA2Hash(nil)
 }
 
@@ -57,17 +56,11 @@ func GetLastestBlock(bcid uint64) *Block {
 }
 
 // NewBlock creates a new block.
-func NewBlock(blk console.Blocker) *Block {
-	pb, ok := blk.Block().(*Block)
-
-	if !ok {
-		return nil
-	}
-
+func NewBlock(pb *Block) *Block {
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: BlockHeaderHash(pb.Header),
-			//MerkleRootHash: GetMerkleRootHash(t),
+			//MerkleRootHash: MerkleRootHash(t),
 			Difficulty: 0, // need to static variable diff
 			Nonce:      0, // need to static variable nonce
 			Timestamp:  common.MakeTimestamp(),
@@ -84,11 +77,6 @@ func NewBlock(blk console.Blocker) *Block {
 func (b *Block) AddTransaction(t *Transaction) error {
 	b.Body.Transactions = append(b.Body.Transactions, t)
 	return nil
-}
-
-// Block function is an interface function that returns a block.
-func (b *Block) Block() interface{} {
-	return b
 }
 
 // String (block) function provides information about the block.
