@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/blockchain/execute"
 	"github.com/smartm2m/chainutil/console"
 	"github.com/smartm2m/chainutil/console/command"
@@ -10,13 +9,12 @@ import (
 
 // TODO : Jongseok
 func main() {
-	bc := core.NewBlockchain()
-
+	//bc := core.AppendBlockchain()
 	// TODO: Using a blockchain
-	_ = bc
+	//_ = bc
 
 	log.SetLogLevel(log.DebugLogLevel)
-	//console.RegisterBlockchain(bc, core.NewBlockchain)
+	//console.RegisterBlockchain(bc, core.AppendBlockchain)
 	//console.RegisterBlock(core.NewBlock)
 	execute.BlockchainCommands()
 	RegisterCommand()
