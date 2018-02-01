@@ -91,21 +91,34 @@ func (b *Block) Block() interface{} {
 	return b
 }
 
-// BlockTransactions returns all transactions of block
-func (b *Block) BlockTransactions() []*Transaction {
-	return b.Body.Transactions
+// String (block) function provides information about the block.
+func (b *Block) String(name string) string {
+
+	buffer := bytes.NewBuffer([]byte{})
+	fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
+	fmt.Fprintf(buffer, "MerkleRootHash   %v\n", b.Header.MerkleRootHash)
+	fmt.Fprintf(buffer, "Difficulty       %v\n", b.Header.Difficulty)
+	fmt.Fprintf(buffer, "Nonce            %v\n", b.Header.Nonce)
+	fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
+	fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
+	fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+
+	res := name + "\n" + buffer.String()
+	return res
 }
 
-//String (block) function provides information about the block.
-func (b *Block) String() string {
-	res := bytes.NewBuffer([]byte{})
-	fmt.Fprintf(res, "PreviousHash     %v\n", b.Header.PreviousHash)
-	fmt.Fprintf(res, "MerkleRootHash   %v\n", b.Header.MerkleRootHash)
-	fmt.Fprintf(res, "Difficulty       %v\n", b.Header.Difficulty)
-	fmt.Fprintf(res, "Nonce            %v\n", b.Header.Nonce)
-	fmt.Fprintf(res, "Timestamp        %v\n", b.Header.Timestamp)
-	fmt.Fprintf(res, "Index            %v\n", b.Header.Index)
-	fmt.Fprintf(res, "Transactions     %v\n", len(b.Body.Transactions))
+// TransactionsString returns string of transactions infomartion
+func (b *Block) TransactionsString(name string) string {
+	res := name + "\nNum\tAmount\tFrom\tTo\n"
+	buffer := bytes.NewBuffer([]byte{})
 
-	return res.String()
+	for idx, t := range b.Body.Transactions {
+		fmt.Fprintf(buffer, strconv.Itoa(idx+1))
+		fmt.Fprintf(buffer, "\t%v", t.Data.Amount)
+		fmt.Fprintf(buffer, "\t%v", t.From)
+		fmt.Fprintf(buffer, "\t%v\n", t.Data.To)
+	}
+
+	res = res + buffer.String()
+	return res
 }

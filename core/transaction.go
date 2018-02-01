@@ -1,9 +1,6 @@
 package core
 
 import (
-	"bytes"
-	"fmt"
-
 	"github.com/smartm2m/blockchain/common"
 )
 
@@ -26,13 +23,4 @@ func NewTransaction(from uint64, to *common.Address, amount uint64) *Transaction
 		Amount: amount,
 	}
 	return &Transaction{From: from, Data: d}
-}
-
-//String (transaction) provides information of a transaction
-func (t *Transaction) String() string {
-	res := bytes.NewBuffer([]byte{})
-	fmt.Fprintf(res, "\t%v", t.From)
-	fmt.Fprintf(res, "\t%v", t.Data.To)
-	fmt.Fprintf(res, "\t%v\n", t.Data.Amount)
-	return res.String()
 }

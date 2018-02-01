@@ -1,7 +1,6 @@
 package execute
 
 import (
-	"bytes"
 	"errors"
 	"strconv"
 
@@ -15,33 +14,49 @@ import (
 func BlockchainCommands() {
 
 	_ = command.AddCommand("", command.Command{
-		Name:        "transaction",
-		Description: "manage transactions",
+		Name:        "bc",
+		Description: "manage blockchains",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
 		Run: func(args []string) error {
-			log.Debug("Transaction commands")
+			log.Debug("Blockchain commands")
 			return nil
 		},
 	})
 
-	_ = command.AddCommand("transaction", command.Command{
+	_ = command.AddCommand("bc", command.Command{
 		Name:        "new",
-		Description: "create a candidate transaction",
+		Description: "create a blockchain",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
-		Run:         AddTransactionToCandidateBlock,
+		Run:         NewBlockchain,
 	})
 
-	_ = command.AddCommand("transaction", command.Command{
+	_ = command.AddCommand("bc", command.Command{
 		Name:        "list",
-		Description: "show candidate transactions list",
+		Description: "show blockchains list",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
-		Run:         ShowCandidateBlockTransactionsList,
+		Run:         ShowBlockchainsList,
 	})
 
-	_ = command.AddCommand("", command.Command{
+	_ = command.AddCommand("bc", command.Command{
+		Name:        "info",
+		Description: "show blockchain Information",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         ShowBlockchainInformation,
+	})
+
+	_ = command.AddCommand("bc info", command.Command{
+		Name:        "all",
+		Description: "show blockchains Information All",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         ShowBlockchainsInformationAll,
+	})
+
+	_ = command.AddCommand("bc", command.Command{
 		Name:        "block",
 		Description: "manage blocks",
 		Commands:    make([]command.Command, 0),
@@ -52,198 +67,179 @@ func BlockchainCommands() {
 		},
 	})
 
-	_ = command.AddCommand("block", command.Command{
-		Name:        "new",
-		Description: "create a block",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         NewBlock,
-	})
-
-	_ = command.AddCommand("block", command.Command{
-		Name:        "attach",
-		Description: "Attach block to blockchain",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         AttachBlockToBlockchain,
-	})
-
-	_ = command.AddCommand("block", command.Command{
+	_ = command.AddCommand("bc block", command.Command{
 		Name:        "info",
-		Description: "show block information",
+		Description: "show information of block",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
 		Run:         ShowBlockInformation,
 	})
 
-	_ = command.AddCommand("block", command.Command{
-		Name:        "transactions",
-		Description: "show transactions of block",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         ShowBlockTransactionsList,
-	})
-
-	_ = command.AddCommand("", command.Command{
-		Name:        "blockchain",
-		Description: "manage blockchains",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run: func(args []string) error {
-			log.Debug("Blockchain commands")
-			return nil
-		},
-	})
-
-	_ = command.AddCommand("blockchain", command.Command{
-		Name:        "new",
-		Description: "create a blockchain",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         NewBlockchain,
-	})
-
-	_ = command.AddCommand("blockchain", command.Command{
-		Name:        "blocks",
+	_ = command.AddCommand("bc block", command.Command{
+		Name:        "list",
 		Description: "show list of blocks",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
 		Run:         ShowBlocksList,
 	})
 
-	_ = command.AddCommand("blockchain", command.Command{
+	_ = command.AddCommand("bc block", command.Command{
+		Name:        "transactions",
+		Description: "show list of a block's transactions",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         ShowBlockTransactionsList,
+	})
+
+	_ = command.AddCommand("bc", command.Command{
+		Name:        "cblock",
+		Description: "manage candidate block",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run: func(args []string) error {
+			log.Debug("Candidate Block commands")
+			return nil
+		},
+	})
+
+	_ = command.AddCommand("bc cblock", command.Command{
+		Name:        "new",
+		Description: "create a candidate block",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         NewCandidateBlock,
+	})
+
+	_ = command.AddCommand("bc cblock", command.Command{
+		Name:        "attach",
+		Description: "Attach candidate block to blockchain",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         AttachCandidateBlockToBlockchain,
+	})
+
+	_ = command.AddCommand("bc cblock", command.Command{
+		Name:        "transaction",
+		Description: "manage transaction of candidate block",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run: func(args []string) error {
+			log.Debug("Block commands")
+			return nil
+		},
+	})
+
+	_ = command.AddCommand("bc cblock transaction", command.Command{
+		Name:        "new",
+		Description: "create a transaction of candidate block",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         NewTransactionInCandidateBlock,
+	})
+
+	_ = command.AddCommand("bc cblock transaction", command.Command{
 		Name:        "list",
-		Description: "show blockchains list",
+		Description: "show transactions list of candidate block",
 		Commands:    make([]command.Command, 0),
 		Flags:       nil,
-		Run:         ShowBlockchainsList,
+		Run:         ShowCandidateBlockTransactionsList,
 	})
-
-	_ = command.AddCommand("blockchain", command.Command{
-		Name:        "info",
-		Description: "show blockchain Information",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         ShowBlockchainInformation,
-	})
-
-	_ = command.AddCommand("blockchain info", command.Command{
-		Name:        "all",
-		Description: "show blockchains Information All",
-		Commands:    make([]command.Command, 0),
-		Flags:       nil,
-		Run:         ShowBlockchainsInformationAll,
-	})
-}
-
-// AddTransactionToCandidateBlock creates a new transaction and put it in a candidate block of blockchain.
-// Also, need to transaction that From A has sent To B.
-// Therefore, AddTransactionToCandidateBlock requires a blockchain ID, From, To(address), Amount.
-// ''AddTransactionToCandidateBlcok(bcid uint64, from uint64, to *common.Address, amount uint64)''
-func AddTransactionToCandidateBlock(args []string) error {
-	log.Debug("Create New Transaction in the Candidate block")
-	if len(args) < 4 {
-		return errors.New("Incorrect parameters")
-	}
-
-	log.Debug("Blockchain ID : " + args[0])
-	bcid := common.StringToUint64(args[0])
-	from := common.StringToUint64(args[1])
-	to := common.StringToAddress(args[2])
-	amount := common.StringToUint64(args[3])
-	bc, err := core.SelectBlockchain(bcid)
-
-	if err != nil {
-		return err
-	}
-
-	t := core.NewTransaction(from, &to, amount)
-	bc.CandidateBlock.AddTransaction(t)
-
-	return nil
-}
-
-// NewBlock creates a new candidate block into a blockchain identified by a ID.
-// Therefore, NewBlock requires a blockchain ID
-// ''NewBlock(bcid uint64)''
-func NewBlock(args []string) error {
-	log.Debug("Create New Candidate Block")
-	if len(args) < 1 {
-		return errors.New("Incorrect parameters")
-	}
-
-	log.Debug("Blockchain ID : " + args[0])
-	bcid := common.StringToUint64(args[0])
-	bc, err := core.SelectBlockchain(bcid)
-	if err != nil {
-		return err
-	}
-
-	bc.CandidateBlock = core.NewBlock(core.GetLastestBlock(bcid))
-
-	return nil
 }
 
 // NewBlockchain creates a new blockchain containing genesisblock
 // ''NewBlockchain()''
 func NewBlockchain(args []string) error {
 	log.Debug("Create New Blockchain")
+	log.Debug(common.PerforatedLine)
+
 	bc := core.NewBlockchain()
 	bc.RegisterBlockchain()
+	log.Debug("Create completed")
 
 	return nil
 }
 
-// AttachBlockToBlockchain attach candidate block into a blockchain identified by a ID.
-// Therefore, AttachBlockToBlockchain requires a blockchain ID
-// ''AttachBlockToBlockchain(bcid uint64)''
-func AttachBlockToBlockchain(args []string) error {
-	log.Debug("Attach Block to Blockchain")
+// ShowBlockchainsList shows list of blockchains
+// ''ShowBlockchainsList()''
+func ShowBlockchainsList(args []string) error {
+	log.Debug("Show Blockchains List")
+	log.Debug(common.PerforatedLine)
+
+	var idx uint64
+	var blockchainsList []uint64
+	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
+		blockchainsList = append(blockchainsList, core.GlobalBlockchains[idx].ID)
+	}
+
+	log.Debug(common.Uint64ArrayToString(blockchainsList, ", "))
+	log.Debug(common.PerforatedLine)
+	return nil
+}
+
+// ShowBlockchainInformation shows information of blockchain identified by a ID.
+// Therefore, ShowBlockchainInformation requires a blockchain ID
+// ''ShowBlockchainInformation(bcid uint64)''
+func ShowBlockchainInformation(args []string) error {
+	log.Debug("Show Blockchain Information")
+	log.Debug(common.PerforatedLine)
+
 	if len(args) < 1 {
 		return errors.New("Incorrect parameters")
 	}
 
+	//log.Debug("Blockchain ID : " + args[0])
+	bcid := common.StringToUint64(args[0])
+	bc, err := core.SelectBlockchain(bcid)
+
+	if err != nil {
+		return err
+	}
+
+	log.Debug(bc.String())
+	log.Debug(common.PerforatedLine)
+
+	return nil
+}
+
+// ShowBlockchainsInformationAll shows inforamtion of all blockchains
+// ''ShowBlockchainsInformationAll()''
+func ShowBlockchainsInformationAll(args []string) error {
+	log.Debug("Show Blockchains Information All")
+	log.Debug(common.PerforatedLine)
+
+	var idx uint64
+	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
+		bc := core.GlobalBlockchains[idx]
+		log.Debug(bc.String())
+		log.Debug(common.PerforatedLine)
+	}
+
+	return nil
+}
+
+// ShowBlocksList shows list of block
+// ''ShowBlocksList(bcid uint64)''
+func ShowBlocksList(args []string) error {
+	log.Debug("Show Blocks List")
+	log.Debug(common.PerforatedLine)
+
+	if len(args) < 1 {
+		return errors.New("Incorrect parameters")
+	}
+
+	bcid := common.StringToUint64(args[0])
+	bc, err := core.SelectBlockchain(bcid)
+
+	if err != nil {
+		return err
+	}
 	log.Debug("Blockchain ID : " + args[0])
-	bcid := common.StringToUint64(args[0])
-	bc, err := core.SelectBlockchain(bcid)
-	if err != nil {
-		return err
-	}
-	bc.AddBlock()
-	log.Debug("Attach completed")
-	return nil
-}
-
-// ShowCandidateBlockTransactionsList shows a list of transactions that exist in a blockchain identified by a ID.
-// Therefore, ShowCandidateBlockTransactionsList requires a blockchain ID
-// ''ShowCandidateBlockTransactionsList(bcid uint64)''
-func ShowCandidateBlockTransactionsList(args []string) error {
-	log.Debug("Show Candidate Block Transactions list")
-	if len(args) < 1 {
-		return errors.New("Incorrect parameters")
-	}
-
-	log.Debug("Blockchain ID : " + args[0] + "\n")
-	bcid := common.StringToUint64(args[0])
-	bc, err := core.SelectBlockchain(bcid)
-
-	if err != nil {
-		return err
-	}
-	b := bc.CandidateBlock
-	ts := b.BlockTransactions()
-	var buffer bytes.Buffer
-	buffer.WriteString(b.String())
-	buffer.WriteString("-----------------------------------------------------\n")
-	buffer.WriteString("Num\tFrom\tTo\tAmount\n")
-	for idx, t := range ts {
+	for idx, b := range bc.Blocks {
 		i := strconv.Itoa(idx)
-		buffer.WriteString(i)
-		buffer.WriteString(t.String())
+		log.Debug(b.String("Block Index : " + i))
+		log.Debug(common.PerforatedLine)
 	}
-	buffer.WriteString("-----------------------------------------------------\n")
 
-	log.Debug(buffer.String())
 	return nil
 }
 
@@ -251,12 +247,12 @@ func ShowCandidateBlockTransactionsList(args []string) error {
 // ''ShowBlockInformation(bcid uint64, bidx uint64)''
 func ShowBlockInformation(args []string) error {
 	log.Debug("Show Block Information")
+	log.Debug(common.PerforatedLine)
+
 	if len(args) < 2 {
 		return errors.New("Incorrect parameters")
 	}
 
-	log.Debug("Blockchain ID : " + args[0] + "\n")
-	log.Debug("Block index : " + args[1] + "\n")
 	bcid := common.StringToUint64(args[0])
 	bidx := common.StringToUint64(args[1])
 
@@ -268,8 +264,16 @@ func ShowBlockInformation(args []string) error {
 	if bidx > bc.BlockchainHeight-1 {
 		return errors.New("Incorrect block index")
 	}
+	b := bc.Block(bidx)
 
-	log.Debug(bc.Block(bidx).String())
+	if bidx == 0 {
+		args[1] = "Candidate"
+		b = bc.CandidateBlock
+	}
+
+	log.Debug(b.String("Blockchain ID : " + args[0] + "\tBlock Index : " + args[1]))
+	log.Debug(common.PerforatedLine)
+
 	return nil
 }
 
@@ -277,6 +281,8 @@ func ShowBlockInformation(args []string) error {
 // ''ShowBlockTransactionsList(bcid uint64, bidx uint64)''
 func ShowBlockTransactionsList(args []string) error {
 	log.Debug("Show Block Transactions List")
+	log.Debug(common.PerforatedLine)
+
 	if len(args) < 2 {
 		return errors.New("Incorrect parameters")
 	}
@@ -291,28 +297,112 @@ func ShowBlockTransactionsList(args []string) error {
 	}
 
 	b := bc.Block(bidx)
-	ts := b.BlockTransactions()
+
+	if bidx == 0 {
+		args[1] = "Candidate"
+		b = bc.CandidateBlock
+	}
+
 	if err != nil {
 		return err
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(b.String())
-	buffer.WriteString("-----------------------------------------------------\n")
-	buffer.WriteString("0\tFrom\tTo\tAmount\n")
-	for idx, t := range ts {
-		buffer.WriteString(string(idx) + t.String())
-	}
-	buffer.WriteString("-----------------------------------------------------\n")
-
-	log.Debug(buffer.String())
+	log.Debug(b.TransactionsString("Blockchain ID : " + args[0] + "\tBlock Index : " + args[1]))
+	log.Debug(common.PerforatedLine)
 	return nil
 }
 
-// ShowBlocksList shows list of block
-// ''ShowBlocksList(bcid uint64)''
-func ShowBlocksList(args []string) error {
-	log.Debug("Show Blocks List")
+// NewCandidateBlock creates a new candidate block into a blockchain identified by a ID.
+// Therefore, NewCandidateBlock requires a blockchain ID
+// ''NewCandidateBlock(bcid uint64)''
+func NewCandidateBlock(args []string) error {
+	log.Debug("Create New Candidate Block")
+	log.Debug(common.PerforatedLine)
+
+	if len(args) < 1 {
+		return errors.New("Incorrect parameters")
+	}
+
+	bcid := common.StringToUint64(args[0])
+	bc, err := core.SelectBlockchain(bcid)
+	if err != nil {
+		return err
+	}
+
+	bc.CandidateBlock = core.NewBlock(core.GetLastestBlock(bcid))
+
+	log.Debug(bc.CandidateBlock.String("Blockchain ID : " + args[0] + "'s Candidate Block"))
+	log.Debug("Create completed")
+	log.Debug(common.PerforatedLine)
+	return nil
+}
+
+// AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a ID.
+// Therefore, AttachCandidateBlockToBlockchain requires a blockchain ID
+// ''AttachCandidateBlockToBlockchain(bcid uint64)''
+func AttachCandidateBlockToBlockchain(args []string) error {
+	log.Debug("Attach Candidate Block to Blockchain")
+	log.Debug(common.PerforatedLine)
+
+	if len(args) < 1 {
+		return errors.New("Incorrect parameters")
+	}
+
+	log.Debug("Blockchain ID : " + args[0])
+	bcid := common.StringToUint64(args[0])
+	bc, err := core.SelectBlockchain(bcid)
+
+	if err != nil {
+		return err
+	}
+
+	bc.AddBlock()
+	log.Debug("Attach completed")
+	log.Debug(common.PerforatedLine)
+
+	return nil
+}
+
+// NewTransactionInCandidateBlock creates a new transaction and put it in a candidate block of blockchain.
+// Also, need to transaction that From A has sent To B.
+// Therefore, NewTransactionInCandidateBlock requires a blockchain ID, From, To(address), Amount.
+// ''NewTransactionInCandidateBlock(bcid uint64, from uint64, to *common.Address, amount uint64)''
+func NewTransactionInCandidateBlock(args []string) error {
+	log.Debug("Create New Transaction in the Candidate block")
+	log.Debug(common.PerforatedLine)
+
+	if len(args) < 4 {
+		return errors.New("Incorrect parameters")
+	}
+
+	log.Debug("Blockchain ID : " + args[0])
+	bcid := common.StringToUint64(args[0])
+	amount := common.StringToUint64(args[1])
+	from := common.StringToUint64(args[2])
+	to := common.StringToAddress(args[3])
+
+	bc, err := core.SelectBlockchain(bcid)
+
+	if err != nil {
+		return err
+	}
+
+	t := core.NewTransaction(from, &to, amount)
+	bc.CandidateBlock.AddTransaction(t)
+	log.Debug("Amount : " + args[1] + "\tFrom : " + args[2] + "\tTo : " + args[3])
+	log.Debug("Create completed")
+	log.Debug(common.PerforatedLine)
+
+	return nil
+}
+
+// ShowCandidateBlockTransactionsList shows a list of transactions that exist in a blockchain identified by a ID.
+// Therefore, ShowCandidateBlockTransactionsList requires a blockchain ID
+// ''ShowCandidateBlockTransactionsList(bcid uint64)''
+func ShowCandidateBlockTransactionsList(args []string) error {
+	log.Debug("Show Candidate Block Transactions list")
+	log.Debug(common.PerforatedLine)
+
 	if len(args) < 1 {
 		return errors.New("Incorrect parameters")
 	}
@@ -324,66 +414,10 @@ func ShowBlocksList(args []string) error {
 		return err
 	}
 
-	var buffer bytes.Buffer
-	buffer.WriteString(bc.String())
-	for idx, b := range bc.Blocks {
-		i := strconv.Itoa(idx)
-		buffer.WriteString("-----------------------------------------------------\n")
-		buffer.WriteString(i + "-th Block: \n")
-		buffer.WriteString(b.String() + "\n")
-		buffer.WriteString("-----------------------------------------------------\n")
-	}
+	b := bc.CandidateBlock
 
-	log.Debug(buffer.String())
-	return nil
-}
-
-// ShowBlockchainsList shows list of blockchains
-// ''ShowBlockchainsList()''
-func ShowBlockchainsList(args []string) error {
-	log.Debug("Show Blockchains List")
-	var idx uint64
-	var blockchainsList []uint64
-	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
-		blockchainsList = append(blockchainsList, core.GlobalBlockchains[idx].ID)
-	}
-
-	log.Debug(common.Uint64ArrayToString(blockchainsList, ", "))
-	return nil
-}
-
-// ShowBlockchainInformation shows information of blockchain identified by a ID.
-// Therefore, ShowBlockchainInformation requires a blockchain ID
-// ''ShowBlockchainInformation(bcid uint64)''
-func ShowBlockchainInformation(args []string) error {
-	log.Debug("Show Blockchain Information")
-	if len(args) < 1 {
-		return errors.New("Incorrect parameters")
-	}
-
-	//log.Debug("Blockchain ID : " + args[0])
-	bcid := common.StringToUint64(args[0])
-	bc, err := core.SelectBlockchain(bcid)
-
-	if err != nil {
-		return err
-	}
-
-	log.Debug(bc.String())
-	return nil
-}
-
-// ShowBlockchainsInformationAll shows inforamtion of all blockchains
-// ''ShowBlockchainsInformationAll()''
-func ShowBlockchainsInformationAll(args []string) error {
-	log.Debug("Show Blockchains Information All")
-	var idx uint64
-	log.Debug("-----------------------------------------------------\n")
-	for idx = 0; idx < core.GlobalBlockchainsLength; idx++ {
-		bc := core.GlobalBlockchains[idx]
-		log.Debug(bc.String())
-		log.Debug("-----------------------------------------------------\n")
-	}
+	log.Debug(b.TransactionsString("Blockchain ID : " + args[0] + "'s Candidate Block"))
+	log.Debug(common.PerforatedLine)
 
 	return nil
 }

@@ -149,7 +149,7 @@ func (bc *Blockchain) String() string {
 	res := bytes.NewBuffer([]byte{})
 	fmt.Fprintf(res, "\nID     %v\n", bc.ID)
 	fmt.Fprintf(res, "Height %v\n\n", bc.BlockchainHeight)
-	fmt.Fprintf(res, "Genesis Block \n%v\n", bc.GenesisBlock.String())
-	fmt.Fprintf(res, "Candidate Block \n%v", bc.CandidateBlock.String())
+	fmt.Fprintf(res, "Genesis Block \n%v\n", bc.GenesisBlock.String("Genesis"))
+	fmt.Fprintf(res, "Candidate Block \n%v", bc.CandidateBlock.String("Candidate"))
 	return res.String()
 }

@@ -10,6 +10,9 @@ import (
 	"time"
 )
 
+//PerforatedLine is perforated line
+const PerforatedLine string = "\n-----------------------------------------------------\n"
+
 // Address is type of transaction address(20 bytes)
 type Address [20]byte
 
@@ -46,9 +49,9 @@ func (h *Hash) SetHashBytes(b []byte) {
 
 // BytesToAddress converts bytes to address
 func BytesToAddress(b []byte) Address {
-	var h Address
-	h.SetAddressBytes(b)
-	return h
+	var a Address
+	a.SetAddressBytes(b)
+	return a
 }
 
 // BytesToHash converts bytes to hash
@@ -84,17 +87,25 @@ func StringToUint64(s string) uint64 {
 	return u
 }
 
+// BytesToString converts bytes to string
+func BytesToString(b []byte) string {
+	return string(b[:])
+}
+
 // StringToAddress converts string to address
 func StringToAddress(s string) Address { return BytesToAddress([]byte(s)) }
 
 // StringToHash converts string to hash
 func StringToHash(s string) Hash { return BytesToHash([]byte(s)) }
 
-// HexToHash converts hex to hash
-func HexToHash(s string) Hash { return BytesToHash(FromHex(s)) }
+// AddressToString converts hash to string
+func AddressToString(a Address) string { return base64.StdEncoding.EncodeToString(a[:]) }
 
 // HashToString converts hash to string
 func HashToString(h Hash) string { return base64.StdEncoding.EncodeToString(h[:]) }
+
+// HexToHash converts hex to hash
+func HexToHash(s string) Hash { return BytesToHash(FromHex(s)) }
 
 // CopyBytes copies bytes
 func CopyBytes(b []byte) (copiedBytes []byte) {
