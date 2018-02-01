@@ -50,8 +50,8 @@ func PerformConsensus(p1, p2, p3 string) error {
 }
 
 // Execution ...
-func Execution(p1, p2 string) error {
-	res := fmt.Sprintf("Execution(%s,%s)", p1, p2)
+func Execution(p1 string, p2 int, p3 uint64, p4 int64, p5 []byte) error {
+	res := fmt.Sprintf("Execution(%s,%v,%v,%v,%v)", p1, p2, p3, p4, p5)
 	log.Debug(res)
 	return nil
 }
