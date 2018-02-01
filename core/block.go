@@ -6,9 +6,9 @@ import (
 	"strconv"
 
 	"github.com/smartm2m/blockchain/common"
-	"github.com/smartm2m/chainutil/console"
 )
 
+// A BlockHeader is the header of block, which contains the information of the block.
 type BlockHeader struct {
 	PreviousHash   common.Hash
 	MerkleRootHash common.Hash
@@ -18,74 +18,95 @@ type BlockHeader struct {
 	Index          uint64
 }
 
+// A BlockBody is the body of block, which contains transactions.
 type BlockBody struct {
 	Transactions []*Transaction
 }
 
+// A Block is an element of blockchain, consisting of block header and block body.
 type Block struct {
 	Header BlockHeader
 	Body   BlockBody
 }
 
+// BlockHeaderHash computes the hash value of the block header.
 func BlockHeaderHash(bh BlockHeader) common.Hash {
 	var buffer bytes.Buffer
 	buffer.WriteString(common.HashToString(bh.PreviousHash))
 	buffer.WriteString(common.HashToString(bh.MerkleRootHash))
-	buffer.WriteString(strconv.Itoa(int(bh.Difficulty)))
-	buffer.WriteString(strconv.Itoa(int(bh.Nonce)))
-	buffer.WriteString(strconv.Itoa(int(bh.Timestamp)))
-	buffer.WriteString(strconv.Itoa(int(bh.Index)))
+	buffer.WriteString(strconv.FormatUint(bh.Difficulty, 10))
+	buffer.WriteString(strconv.FormatUint(bh.Nonce, 10))
+	buffer.WriteString(strconv.FormatInt(bh.Timestamp, 10))
+	buffer.WriteString(strconv.FormatUint(bh.Index, 10))
 
 	var s = common.StringToHash(buffer.String())
 	return common.SHA2Hash(s[:])
 }
 
-func GetMerkleRootHash(t *Transaction) common.Hash {
+// MerkleRootHash is ...
+func MerkleRootHash(t *Transaction) common.Hash {
 	return common.SHA2Hash(nil)
 }
 
-//cb = currnet block, The name needs to be changed
-func NewBlock(blk console.Blocker) *Block {
-	cb, ok := blk.Block().(*Block)
+// GetLastestBlock gest lastest block in blockchain identified by a ID.
+// Therefore, GetLastestBlock requires a blockchain ID.
+func GetLastestBlock(bcid uint64) *Block {
+	bc, _ := SelectBlockchain(bcid)
+	return &bc.Blocks[bc.BlockchainHeight-1]
+}
 
-	if !ok {
-		return nil
-	}
-
+// NewBlock creates a new block.
+func NewBlock(pb *Block) *Block {
 	b := &Block{
 		Header: BlockHeader{
-			PreviousHash: BlockHeaderHash(cb.Header),
-			//MerkleRootHash	: GetMerkleRootHash(t),
+			PreviousHash: BlockHeaderHash(pb.Header),
+			//MerkleRootHash: MerkleRootHash(t),
 			Difficulty: 0, // need to static variable diff
 			Nonce:      0, // need to static variable nonce
 			Timestamp:  common.MakeTimestamp(),
-			Index:      cb.Header.Index + 1,
+			Index:      pb.Header.Index + 1,
 		},
 		Body: BlockBody{
-		//Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
+			Transactions: nil,
 		},
 	}
 	return b
 }
 
+// AddTransaction adds a transaction.
 func (b *Block) AddTransaction(t *Transaction) error {
 	b.Body.Transactions = append(b.Body.Transactions, t)
 	return nil
 }
 
-func (b *Block) Block() interface{} {
-	return b
+// String (block) function provides information about the block.
+func (b *Block) String(name string) string {
+
+	buffer := bytes.NewBuffer([]byte{})
+	fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
+	fmt.Fprintf(buffer, "MerkleRootHash   %v\n", b.Header.MerkleRootHash)
+	fmt.Fprintf(buffer, "Difficulty       %v\n", b.Header.Difficulty)
+	fmt.Fprintf(buffer, "Nonce            %v\n", b.Header.Nonce)
+	fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
+	fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
+	fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+
+	res := name + "\n" + buffer.String()
+	return res
 }
 
-func (b *Block) String() string {
-	res := bytes.NewBuffer([]byte{})
-	fmt.Fprintf(res, "PreviousHash     %v\n", b.Header.PreviousHash)
-	fmt.Fprintf(res, "MerkleRootHash   %v\n", b.Header.MerkleRootHash)
-	fmt.Fprintf(res, "Difficulty       %v\n", b.Header.Difficulty)
-	fmt.Fprintf(res, "Nonce            %v\n", b.Header.Nonce)
-	fmt.Fprintf(res, "Timestamp        %v\n", b.Header.Timestamp)
-	fmt.Fprintf(res, "Index            %v\n", b.Header.Index)
-	fmt.Fprintf(res, "Transactions     %v\n", len(b.Body.Transactions))
+// TransactionsString returns string of transactions infomartion
+func (b *Block) TransactionsString(name string) string {
+	res := name + "\nNum\tAmount\tFrom\tTo\n"
+	buffer := bytes.NewBuffer([]byte{})
 
-	return res.String()
+	for idx, t := range b.Body.Transactions {
+		fmt.Fprintf(buffer, strconv.Itoa(idx+1))
+		fmt.Fprintf(buffer, "\t%v", t.Data.Amount)
+		fmt.Fprintf(buffer, "\t%v", t.From)
+		fmt.Fprintf(buffer, "\t%v\n", t.Data.To)
+	}
+
+	res = res + buffer.String()
+	return res
 }
