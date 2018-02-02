@@ -89,7 +89,12 @@ func StringToUint64(s string) uint64 {
 
 // BytesToString converts bytes to string
 func BytesToString(b []byte) string {
-	return string(b[:])
+	res := ""
+	for _, v := range b {
+		res += fmt.Sprintf("%v", v)
+	}
+
+	return res
 }
 
 // StringToAddress converts string to address
