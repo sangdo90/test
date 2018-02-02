@@ -17,6 +17,7 @@ func main() {
 	//console.RegisterBlockchain(bc, core.AppendBlockchain)
 	//console.RegisterBlock(core.NewBlock)
 	execute.BlockchainCommands()
+	execute.ConsensusCommands()
 	RegisterCommand()
 	console.Start()
 }
@@ -25,10 +26,11 @@ func main() {
 func RegisterCommand() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "quit",
+		ShortName:   "q",
 		Description: "Exit the program",
 		Commands:    nil,
 		Flags:       nil,
-		Run: func(args []string) error {
+		Run: func() error {
 			console.GetContext().Quit()
 			return nil
 		},
