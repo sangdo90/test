@@ -46,8 +46,9 @@ func BlockchainCommands() {
 						Run:         ShowBlockchainsInformationAll,
 					},
 				},
-				Flags: nil,
-				Run:   ShowBlockchainInformation,
+				Flags:         nil,
+				DefaultParams: []interface{}{uint64(1)},
+				Run:           ShowBlockchainInformation,
 			},
 			command.Command{
 				Name:        "block",
