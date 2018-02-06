@@ -1,6 +1,7 @@
 package execute
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
@@ -58,19 +59,20 @@ func BlockchainCommands() {
 				Description: "manage blocks",
 				Commands: []command.Command{
 					command.Command{
-						Name:        "info",
-						Description: "show information of block",
-						Commands:    make([]command.Command, 0),
-						Flags:       nil,
-						Run:         ShowBlockInformation,
-					},
-					command.Command{
 						Name:        "list",
 						ShortName:   "ls",
 						Description: "show list of blocks",
 						Commands:    make([]command.Command, 0),
 						Flags:       nil,
 						Run:         ShowBlocksList,
+					},
+					command.Command{
+						Name:          "info",
+						Description:   "show information of block",
+						Commands:      make([]command.Command, 0),
+						Flags:         nil,
+						DefaultParams: []interface{}{uint64(1), uint64(0)},
+						Run:           ShowBlockInformation,
 					},
 				},
 				Flags: nil,
@@ -82,18 +84,20 @@ func BlockchainCommands() {
 				Description: "manage candidate block",
 				Commands: []command.Command{
 					command.Command{
-						Name:        "new",
-						Description: "create a candidate block",
-						Commands:    make([]command.Command, 0),
-						Flags:       nil,
-						Run:         NewCandidateBlock,
+						Name:          "new",
+						Description:   "create a candidate block",
+						Commands:      make([]command.Command, 0),
+						Flags:         nil,
+						DefaultParams: []interface{}{uint64(1)},
+						Run:           NewCandidateBlock,
 					},
 					command.Command{
-						Name:        "attach",
-						Description: "Attach candidate block to blockchain",
-						Commands:    make([]command.Command, 0),
-						Flags:       nil,
-						Run:         AttachCandidateBlockToBlockchain,
+						Name:          "attach",
+						Description:   "Attach candidate block to blockchain",
+						Commands:      make([]command.Command, 0),
+						Flags:         nil,
+						DefaultParams: []interface{}{uint64(1)},
+						Run:           AttachCandidateBlockToBlockchain,
 					},
 				},
 				Flags: nil,
@@ -109,6 +113,7 @@ func BlockchainCommands() {
 // ''NewBlockchain()''
 func NewBlockchain() error {
 	log.Debug("Create New Blockchain")
+	log.Info(perforatedLine)
 
 	bc := core.NewBlockchain()
 	core.AppendBlockchain(bc)
@@ -122,6 +127,7 @@ func NewBlockchain() error {
 // ''ShowBlockchainsList()''
 func ShowBlockchainsList() error {
 	log.Debug("Show Blockchains List")
+	log.Info(perforatedLine)
 
 	result := ""
 	for _, bc := range core.GlobalBlockchains {
@@ -129,7 +135,8 @@ func ShowBlockchainsList() error {
 	}
 
 	log.Info(result)
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
+
 	return nil
 }
 
@@ -138,15 +145,15 @@ func ShowBlockchainsList() error {
 // ''ShowBlockchainInformation(bcid uint64)''
 func ShowBlockchainInformation(bcid uint64) error {
 	log.Debug("Show Blockchain Information")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
+	bc, err := GetBlockchain(bcid)
 
-	bc, err := core.SelectBlockchain(bcid)
 	if err != nil {
 		return err
 	}
 
-	log.Debug(bc.String())
-	log.Debug(perforatedLine)
+	log.Info(BlockchainStringInfo(bc, ""))
+	log.Info(perforatedLine)
 
 	return nil
 }
@@ -155,11 +162,11 @@ func ShowBlockchainInformation(bcid uint64) error {
 // ''ShowBlockchainsInformationAll()''
 func ShowBlockchainsInformationAll() error {
 	log.Debug("Show Blockchains Information All")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
 
 	for _, bc := range core.GlobalBlockchains {
-		log.Debug(bc.String())
-		log.Debug(perforatedLine)
+		log.Info(BlockchainStringInfo(bc, ""))
+		log.Info(perforatedLine)
 	}
 
 	return nil
@@ -169,18 +176,20 @@ func ShowBlockchainsInformationAll() error {
 // ''ShowBlocksList(bcid uint64)''
 func ShowBlocksList(bcid uint64) error {
 	log.Debug("Show Blocks List")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
 
-	bc, err := core.SelectBlockchain(bcid)
+	bc, err := GetBlockchain(bcid)
+
 	if err != nil {
 		return err
 	}
 
-	log.Debug("Blockchain ID : " + strconv.FormatUint(bcid, 10))
+	log.Info("Blockchain ID : " + strconv.FormatUint(bcid, 10))
+
 	for idx, b := range bc.Blocks {
 		i := strconv.Itoa(idx)
-		log.Debug(b.String("Block Index : " + i))
-		log.Debug(perforatedLine)
+		log.Info(BlockStringInfo(&b, "Block Index : "+i))
+		log.Info(perforatedLine)
 	}
 
 	return nil
@@ -190,28 +199,29 @@ func ShowBlocksList(bcid uint64) error {
 // ''ShowBlockInformation(bcid uint64, bidx uint64)''
 func ShowBlockInformation(bcid uint64, bidx uint64) error {
 	log.Debug("Show Block Information")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
 
 	bcids := strconv.FormatUint(bcid, 10)
 	bidxs := strconv.FormatUint(bidx, 10)
+	bc, err := GetBlockchain(bcid)
 
-	bc, err := core.SelectBlockchain(bcid)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if bidx > bc.BlockchainHeight-1 {
 		return errors.New("Incorrect block index")
 	}
-	b := bc.Block(bidx)
+
+	b := &bc.Blocks[bidx]
 
 	if bidx == 0 {
 		bidxs = "Candidate"
 		b = bc.CandidateBlock
 	}
 
-	log.Debug(b.String("Blockchain ID : " + bcids + "\tBlock Index : " + bidxs))
-	log.Debug(perforatedLine)
+	log.Info(BlockStringInfo(b, "Blockchain ID : "+bcids+"\tBlock Index : "+bidxs))
+	log.Info(perforatedLine)
 
 	return nil
 }
@@ -221,19 +231,20 @@ func ShowBlockInformation(bcid uint64, bidx uint64) error {
 // ''NewCandidateBlock(bcid uint64)''
 func NewCandidateBlock(bcid uint64) error {
 	log.Debug("Create New Candidate Block")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
 
 	bcids := strconv.FormatUint(bcid, 10)
-	bc, err := core.SelectBlockchain(bcid)
+	bc, err := GetBlockchain(bcid)
+
 	if err != nil {
 		return err
 	}
 
-	bc.CandidateBlock = core.NewBlock(core.GetLastestBlock(bcid))
+	bc.CandidateBlock = core.NewBlock(&bc.Blocks[bc.BlockchainHeight-1])
 
-	log.Debug(bc.CandidateBlock.String("Blockchain ID : " + bcids + "'s Candidate Block"))
+	log.Info(BlockStringInfo(bc.CandidateBlock, "Blockchain ID : "+bcids+"'s Candidate Block"))
+	log.Info(perforatedLine)
 	log.Debug("Create completed")
-	log.Debug(perforatedLine)
 	return nil
 }
 
@@ -242,19 +253,51 @@ func NewCandidateBlock(bcid uint64) error {
 // ''AttachCandidateBlockToBlockchain(bcid uint64)''
 func AttachCandidateBlockToBlockchain(bcid uint64) error {
 	log.Debug("Attach Candidate Block to Blockchain")
-	log.Debug(perforatedLine)
+	log.Info(perforatedLine)
 
 	bcids := strconv.FormatUint(bcid, 10)
 	log.Debug("Blockchain ID : " + bcids)
-	bc, err := core.SelectBlockchain(bcid)
+	bc, err := GetBlockchain(bcid)
 
 	if err != nil {
 		return err
 	}
 
 	bc.AddBlock()
+	log.Info(perforatedLine)
 	log.Debug("Attach completed")
-	log.Debug(perforatedLine)
-
 	return nil
+}
+
+// GetBlockchain gets blockchain
+func GetBlockchain(bcid uint64) (*core.Blockchain, error) {
+	if bcid > uint64(len(core.GlobalBlockchains)) {
+		return nil, errors.New("Invalid Select Blockchain")
+	}
+
+	return core.GlobalBlockchains[bcid-1], nil
+}
+
+// BlockStringInfo provides information(string) about the block.
+func BlockStringInfo(b *core.Block, title string) string {
+	buffer := bytes.NewBuffer([]byte{})
+	fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
+	fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
+	fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
+	fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+
+	res := title + "\n" + buffer.String()
+	return res
+}
+
+// BlockchainStringInfo provides information(string) about the blockchain.
+func BlockchainStringInfo(bc *core.Blockchain, title string) string {
+	buffer := bytes.NewBuffer([]byte{})
+	fmt.Fprintf(buffer, "\nID     %v\n", bc.ID)
+	fmt.Fprintf(buffer, "Height %v\n\n", bc.BlockchainHeight)
+	fmt.Fprintf(buffer, "Genesis Block \n%v\n", BlockStringInfo(bc.GenesisBlock, "Genesis"))
+	fmt.Fprintf(buffer, "Candidate Block \n%v", BlockStringInfo(bc.CandidateBlock, "Candidate"))
+
+	res := title + "\n" + buffer.String()
+	return res
 }
