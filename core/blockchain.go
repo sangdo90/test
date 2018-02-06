@@ -39,6 +39,9 @@ func AppendBlockchain(bc *Blockchain) error {
 }
 
 // NewBlockchain creates blockchain.
+// TODO: ID is not updated, needs to modification.
+// TODO: ID should be considered to have a unique value,
+// TODO: even if the blockchain is deleted.
 func NewBlockchain() *Blockchain {
 	b := NewGenesisBlock()
 	cb := NewBlock(b)
