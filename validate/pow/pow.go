@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/chainutil/log"
@@ -20,6 +21,7 @@ func Mining(b *core.Block) uint64 {
 		log.Debug("Difficulty: " + hashToString(diff))
 		log.Debug("Block Hash: " + hashToString(hash))
 		b.Header.Nonce = b.Header.Nonce + 1
+		time.Sleep(300 * time.Millisecond)
 
 	}
 	log.Debug("Tried: " + strconv.Itoa(i))
