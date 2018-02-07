@@ -45,7 +45,7 @@ type Block struct {
 func NewBlock(pb *Block) *Block {
 	b := &Block{
 		Header: BlockHeader{
-			PreviousHash: sha256.Sum256(pb.Header.toBytes()),
+			PreviousHash: sha256.Sum256(pb.Header.ToBytes()),
 			Timestamp:    time.Now().UnixNano(),
 			Index:        pb.Header.Index + 1,
 		},
