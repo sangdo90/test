@@ -16,6 +16,7 @@ func main() {
 // RegisterCommand register commands for manage blockchains.
 func RegisterCommand() {
 	execute.BlockchainCommands()
+	execute.BlockCommands()
 	_ = command.AddCommand("", command.Command{
 		Name:        "quit",
 		ShortName:   "q",

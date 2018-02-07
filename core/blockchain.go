@@ -19,7 +19,7 @@ type Blockchain struct {
 }
 
 // NewGenesisBlock creates genesis block.
-func NewGenesisBlock() *Block {
+func newGenesisBlock() *Block {
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: sha256.Sum256([]byte{}),
@@ -43,7 +43,7 @@ func AppendBlockchain(bc *Blockchain) error {
 // TODO: ID should be considered to have a unique value,
 // TODO: even if the blockchain is deleted.
 func NewBlockchain() *Blockchain {
-	b := NewGenesisBlock()
+	b := newGenesisBlock()
 	cb := NewBlock(b)
 	bc := &Blockchain{
 		ID:               0, // init value
