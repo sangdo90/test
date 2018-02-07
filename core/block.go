@@ -12,24 +12,28 @@ import (
 type BlockHeader struct {
 	PreviousHash   [32]byte
 	MerkleRootHash [32]byte
+	Difficulty     [32]byte
+	Nonce          uint64
 	Timestamp      int64
 	Index          uint64
 }
 
-func (bh *BlockHeader) toBytes() []byte {
+// ToBytes returns a slice of bytes of BlockHeader.
+func (bh *BlockHeader) ToBytes() []byte {
 	res := make([]byte, 0)
 
 	tb := make([]byte, binary.MaxVarintLen64)
 	ib := make([]byte, binary.MaxVarintLen64)
+	nb := make([]byte, binary.MaxVarintLen64)
 	binary.PutVarint(tb, bh.Timestamp)
 	binary.PutUvarint(ib, bh.Index)
+	binary.PutUvarint(nb, bh.Nonce)
 
-	for _, b := range [][]byte{bh.PreviousHash[:], tb, ib} {
+	for _, b := range [][]byte{bh.PreviousHash[:], bh.MerkleRootHash[:], bh.Difficulty[:], tb, ib, nb} {
 		res = append(res, b...)
 	}
 
 	return res
-
 }
 
 // A BlockBody is the body of block, which contains transactions.
@@ -45,9 +49,12 @@ type Block struct {
 
 // NewBlock creates a new block.
 func NewBlock(pb *Block) *Block {
+	var diff [32]byte
+	diff[0] = 10
 	b := &Block{
 		Header: BlockHeader{
-			PreviousHash: sha256.Sum256(pb.Header.toBytes()),
+			PreviousHash: sha256.Sum256(pb.Header.ToBytes()),
+			Difficulty:   diff,
 			Timestamp:    time.Now().UnixNano(),
 			Index:        pb.Header.Index + 1,
 		},

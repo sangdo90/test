@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/smartm2m/blockchain/core"
+	"github.com/smartm2m/blockchain/validate/pow"
 	"github.com/smartm2m/chainutil/console/command"
 	"github.com/smartm2m/chainutil/log"
 )
@@ -146,6 +147,7 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 	if err != nil {
 		return err
 	}
+	pow.Mining(bc.CandidateBlock)
 
 	_ = bc.AddBlock()
 	log.Info(perforatedLine)
@@ -157,16 +159,23 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 func blockStringInfo(b *core.Block, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
 	if b != nil {
-		ph := ""
-		for _, v := range b.Header.PreviousHash {
-			ph += fmt.Sprintf("%02x", v)
+		var ph, mh, dh string
+		for _, v := range []struct {
+			str  *string
+			hash [32]byte
+		}{
+			{&ph, b.Header.PreviousHash},
+			{&mh, b.Header.MerkleRootHash},
+			{&dh, b.Header.Difficulty},
+		} {
+			for _, h := range v.hash {
+				*v.str += fmt.Sprintf("%02x", h)
+			}
 		}
-		mh := ""
-		for _, v := range b.Header.MerkleRootHash {
-			mh += fmt.Sprintf("%02x", v)
-		}
+
 		fmt.Fprintf(buffer, "PreviousHash     %v\n", ph)
 		fmt.Fprintf(buffer, "MerkleRootHash   %v\n", mh)
+		fmt.Fprintf(buffer, "Difficulty       %v\n", dh)
 		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
 		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
 		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
