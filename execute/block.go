@@ -165,6 +165,7 @@ func blockStringInfo(b *core.Block, title string) string {
 		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
 		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
 		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+		fmt.Fprintf(buffer, "%v", transactionsString(b, ""))
 	}
 
 	res := title + "\n" + buffer.String()
