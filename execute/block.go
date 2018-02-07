@@ -58,18 +58,18 @@ func BlockCommands() {
 }
 
 // ShowBlocksList shows list of block
-// ''ShowBlocksList(bcid uint64)''
-func ShowBlocksList(bcid uint64) error {
+// ''ShowBlocksList(bcidx uint64)''
+func ShowBlocksList(bcidx uint64) error {
 	log.Debug("Show Blocks List")
 	log.Info(perforatedLine)
 
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
 	}
 
-	log.Info("Blockchain ID : " + strconv.FormatUint(bcid, 10))
+	log.Info("Blockchain index : " + strconv.FormatUint(bcidx, 10))
 
 	for idx, b := range bc.Blocks {
 		i := strconv.Itoa(idx)
@@ -81,14 +81,14 @@ func ShowBlocksList(bcid uint64) error {
 }
 
 // ShowBlockInformation shows information of block
-// ''ShowBlockInformation(bcid uint64, bidx uint64)''
-func ShowBlockInformation(bcid uint64, bidx uint64) error {
+// ''ShowBlockInformation(bcidx uint64, bidx uint64)''
+func ShowBlockInformation(bcidx uint64, bidx uint64) error {
 	log.Debug("Show Block Information")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
+	bcids := strconv.FormatUint(bcidx, 10)
 	bidxs := strconv.FormatUint(bidx, 10)
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -105,21 +105,21 @@ func ShowBlockInformation(bcid uint64, bidx uint64) error {
 		b = bc.CandidateBlock
 	}
 
-	log.Info(blockStringInfo(b, "Blockchain ID : "+bcids+"\tBlock Index : "+bidxs))
+	log.Info(blockStringInfo(b, "Blockchain index : "+bcids+"\tBlock Index : "+bidxs))
 	log.Info(perforatedLine)
 
 	return nil
 }
 
-// NewCandidateBlock creates a new candidate block into a blockchain identified by a ID.
-// Therefore, NewCandidateBlock requires a blockchain ID
-// ''NewCandidateBlock(bcid uint64)''
-func NewCandidateBlock(bcid uint64) error {
+// NewCandidateBlock creates a new candidate block into a blockchain identified by a index.
+// Therefore, NewCandidateBlock requires a blockchain index
+// ''NewCandidateBlock(bcidx uint64)''
+func NewCandidateBlock(bcidx uint64) error {
 	log.Debug("Create New Candidate Block")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
-	bc, err := getBlockchain(bcid)
+	bcids := strconv.FormatUint(bcidx, 10)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -127,22 +127,22 @@ func NewCandidateBlock(bcid uint64) error {
 
 	bc.CandidateBlock = core.NewBlock(&bc.Blocks[bc.BlockchainHeight-1])
 
-	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain ID : "+bcids+"'s Candidate Block"))
+	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain index : "+bcids+"'s Candidate Block"))
 	log.Info(perforatedLine)
 	log.Debug("Create completed")
 	return nil
 }
 
-// AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a ID.
-// Therefore, AttachCandidateBlockToBlockchain requires a blockchain ID
-// ''AttachCandidateBlockToBlockchain(bcid uint64)''
-func AttachCandidateBlockToBlockchain(bcid uint64) error {
+// AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a index.
+// Therefore, AttachCandidateBlockToBlockchain requires a blockchain index
+// ''AttachCandidateBlockToBlockchain(bcidx uint64)''
+func AttachCandidateBlockToBlockchain(bcidx uint64) error {
 	log.Debug("Attach Candidate Block to Blockchain")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
-	log.Debug("Blockchain ID : " + bcids)
-	bc, err := getBlockchain(bcid)
+	bcids := strconv.FormatUint(bcidx, 10)
+	log.Debug("Blockchain index : " + bcids)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -155,7 +155,7 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 	return nil
 }
 
-// BlockStringInfo provides information(string) about the block.
+// blockStringInfo provides information(string) about the block.
 func blockStringInfo(b *core.Block, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
 	if b != nil {
@@ -179,6 +179,7 @@ func blockStringInfo(b *core.Block, title string) string {
 		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
 		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
 		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+		fmt.Fprintf(buffer, "%v", transactionsString(b, ""))
 	}
 
 	res := title + "\n" + buffer.String()
