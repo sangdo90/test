@@ -2,8 +2,6 @@ package validate
 
 import (
 	"crypto/sha256"
-
-	"github.com/smartm2m/chainutil/log"
 )
 
 // MerkleRootHash caculates a root hash of the Merkle tree
@@ -48,6 +46,5 @@ func hash(b ...[]byte) []byte {
 		i = append(i, v...)
 	}
 	res := sha256.Sum256(i)
-	log.Debug(res)
 	return res[:]
 }
