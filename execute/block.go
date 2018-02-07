@@ -68,7 +68,7 @@ func ShowBlocksList(bcidx uint64) error {
 		return err
 	}
 
-	log.Info("Blockchain idx : " + strconv.FormatUint(bcidx, 10))
+	log.Info("Blockchain index : " + strconv.FormatUint(bcidx, 10))
 
 	for idx, b := range bc.Blocks {
 		i := strconv.Itoa(idx)
