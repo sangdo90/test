@@ -40,17 +40,14 @@ func NewGenesisBlock() *Block {
 	token := new(common.Hash)
 	rand.Read(token[:])
 
-	diff := new(common.Hash)
-	diff[0] = 127
-
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: common.SHA2Hash(token[:]),
 			//MerkleRootHash: MerkleRootHash(tx),
-			Difficulty: *diff,
-			Nonce:      0,
-			Timestamp:  common.MakeTimestamp(),
-			Index:      0,
+			//Difficulty: *diff,
+			Nonce:     0,
+			Timestamp: common.MakeTimestamp(),
+			Index:     0,
 		},
 		Body: BlockBody{
 			Transactions: nil,

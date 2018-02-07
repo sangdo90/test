@@ -6,9 +6,6 @@ import (
 	"github.com/smartm2m/blockchain/core"
 )
 
-//func Validate(bc ...*core.BlockChain) (*core.BlockChain, error) {
-//	return nil, nil
-//}
 type TxContent struct {
 	x string
 }
@@ -33,5 +30,10 @@ func MerkleRootHash(b *core.Block) ([]byte, error) {
 	}
 	tree, _ := NewTree(list)
 	mr := tree.MerkleRoot()
+
+	//Verify a specific content in in the tree
+	//vc := t.VerifyContent(tree.MerkleRoot(), list[0])
+	//fmt.Println("Verify Content: ", vc)
+
 	return mr, nil
 }

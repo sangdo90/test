@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/smartm2m/blockchain/common"
+	"github.com/smartm2m/blockchain/consensus/pow"
 	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/blockchain/validate"
 	"github.com/smartm2m/chainutil/console/command"
@@ -316,9 +317,16 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 		return err
 	}
 
-	bc.AddBlock()
-	log.Debug("Attach completed")
-	log.Debug(common.PerforatedLine)
+	// pow
+	check, nonce := pow.Mining(bc.CandidateBlock)
+	if check {
+		bc.AddBlock()
+		log.Debug(nonce)
+		log.Debug("Attach completed")
+		log.Debug(common.PerforatedLine)
+	} else {
+		log.Debug("Fail to attach")
+	}
 
 	return nil
 }

@@ -1,6 +1,6 @@
 // Copyright 2017 Cameron Bergoon
 // Licensed under the MIT License, see LICENCE file for details.
-
+// https://github.com/cbergoon/merkletree.git
 package validate
 
 import (

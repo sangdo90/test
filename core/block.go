@@ -59,7 +59,7 @@ func GetLastestBlock(bcid uint64) *Block {
 // NewBlock creates a new block.
 func NewBlock(pb *Block) *Block {
 	diff := new(common.Hash)
-	diff[0] = 127
+	diff[0] = 10
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: BlockHeaderHash(pb.Header),
