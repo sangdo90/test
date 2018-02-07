@@ -12,7 +12,7 @@ import (
 
 const perforatedLine string = "-----------------------------------------------------"
 
-// BlockchainCommands contains blockchain commands.
+// BlockchainCommands registers console commands for Blockchain.
 func BlockchainCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "blockchain",

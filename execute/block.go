@@ -12,7 +12,7 @@ import (
 	"github.com/smartm2m/chainutil/log"
 )
 
-// BlockCommands contains block commands.
+// BlockCommands registers console commands for Block.
 func BlockCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "block",

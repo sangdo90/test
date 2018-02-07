@@ -45,7 +45,7 @@ func TransactionCommands() {
 func NewTransactionInCandidateBlock(bcidx uint64, amount uint64, from []byte, to []byte) error {
 	log.Info("Create New Transaction in the Candidate block")
 	log.Info(perforatedLine)
-	bcids := strconv.FormatUint(bcidx, 10)
+	bcidxs := strconv.FormatUint(bcidx, 10)
 	amounts := strconv.FormatUint(amount, 10)
 
 	tl, fl := len(to), len(from)
@@ -60,7 +60,7 @@ func NewTransactionInCandidateBlock(bcidx uint64, amount uint64, from []byte, to
 	copy(toa[:], to[:tl])
 	copy(froma[:], from[:fl])
 
-	log.Debug("Blockchain index : " + bcids)
+	log.Debug("Blockchain index : " + bcidxs)
 
 	bc, err := getBlockchain(bcidx)
 	if err != nil {
