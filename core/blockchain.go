@@ -44,13 +44,12 @@ func AppendBlockchain(bc *Blockchain) error {
 // TODO: even if the blockchain is deleted.
 func NewBlockchain() *Blockchain {
 	b := newGenesisBlock()
-	cb := NewBlock(b)
 	bc := &Blockchain{
 		ID:               0, // init value
 		Blocks:           []Block{*b},
 		BlockchainHeight: 1, // uint64(len([]Block{*b})), // always 1
 		GenesisBlock:     b,
-		CandidateBlock:   cb,
+		CandidateBlock:   nil,
 	}
 	return bc
 }
@@ -59,6 +58,6 @@ func NewBlockchain() *Blockchain {
 func (bc *Blockchain) AddBlock() error {
 	bc.Blocks = append(bc.Blocks, *bc.CandidateBlock)
 	bc.BlockchainHeight = bc.BlockchainHeight + 1
-	bc.CandidateBlock = NewBlock(bc.CandidateBlock)
+	bc.CandidateBlock = nil
 	return nil
 }

@@ -111,8 +111,8 @@ func blockchainStringInfo(bc *core.Blockchain, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
 	fmt.Fprintf(buffer, "\nID     %v\n", bc.ID)
 	fmt.Fprintf(buffer, "Height %v\n\n", bc.BlockchainHeight)
-	fmt.Fprintf(buffer, "Genesis Block \n%v\n", blockStringInfo(bc.GenesisBlock, "Genesis"))
-	fmt.Fprintf(buffer, "Candidate Block \n%v", blockStringInfo(bc.CandidateBlock, "Candidate"))
+	fmt.Fprintf(buffer, "%v\n", blockStringInfo(bc.GenesisBlock, "Genesis Block"))
+	fmt.Fprintf(buffer, "%v", blockStringInfo(bc.CandidateBlock, "Candidate Block"))
 
 	res := title + "\n" + buffer.String()
 	return res

@@ -156,10 +156,12 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 // BlockStringInfo provides information(string) about the block.
 func blockStringInfo(b *core.Block, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
-	fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
-	fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
-	fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
-	fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+	if b != nil {
+		fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
+		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
+		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
+		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
+	}
 
 	res := title + "\n" + buffer.String()
 	return res
