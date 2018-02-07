@@ -1,6 +1,9 @@
 package core
 
 import (
+	"bytes"
+	"strconv"
+
 	"github.com/smartm2m/blockchain/common"
 )
 
@@ -23,4 +26,13 @@ func NewTransaction(from uint64, to *common.Address, amount uint64) *Transaction
 		Amount: amount,
 	}
 	return &Transaction{From: from, Data: d}
+}
+
+func TransactionHash(t *Transaction) string {
+	var buffer bytes.Buffer
+	buffer.WriteString(strconv.FormatUint(t.From, 10))
+	buffer.WriteString(common.BytesToString(t.Data.To[:]))
+	buffer.WriteString(strconv.FormatUint(t.Data.Amount, 10))
+
+	return buffer.String()
 }

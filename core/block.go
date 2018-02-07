@@ -12,7 +12,7 @@ import (
 type BlockHeader struct {
 	PreviousHash   common.Hash
 	MerkleRootHash common.Hash
-	Difficulty     uint64
+	Difficulty     common.Hash
 	Nonce          uint64
 	Timestamp      int64
 	Index          uint64
@@ -34,7 +34,8 @@ func BlockHeaderHash(bh BlockHeader) common.Hash {
 	var buffer bytes.Buffer
 	buffer.WriteString(common.HashToString(bh.PreviousHash))
 	buffer.WriteString(common.HashToString(bh.MerkleRootHash))
-	buffer.WriteString(strconv.FormatUint(bh.Difficulty, 10))
+	//buffer.WriteString(strconv.FormatUint(bh.Difficulty, 10))
+	buffer.WriteString(common.HashToString(bh.Difficulty))
 	buffer.WriteString(strconv.FormatUint(bh.Nonce, 10))
 	buffer.WriteString(strconv.FormatInt(bh.Timestamp, 10))
 	buffer.WriteString(strconv.FormatUint(bh.Index, 10))
@@ -57,12 +58,14 @@ func GetLastestBlock(bcid uint64) *Block {
 
 // NewBlock creates a new block.
 func NewBlock(pb *Block) *Block {
+	diff := new(common.Hash)
+	diff[0] = 127
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: BlockHeaderHash(pb.Header),
 			//MerkleRootHash: MerkleRootHash(t),
-			Difficulty: 0, // need to static variable diff
-			Nonce:      0, // need to static variable nonce
+			Difficulty: *diff, // need to static variable diff
+			Nonce:      0,     // need to static variable nonce
 			Timestamp:  common.MakeTimestamp(),
 			Index:      pb.Header.Index + 1,
 		},

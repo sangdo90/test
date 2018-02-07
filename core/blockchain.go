@@ -24,6 +24,7 @@ type Blockchain struct {
 	BlockchainHeight uint64
 	GenesisBlock     *Block
 	CandidateBlock   *Block
+	TotalAmount      uint64
 }
 
 // SetSeedUsingTime sets the seed using time.
@@ -39,19 +40,25 @@ func NewGenesisBlock() *Block {
 	token := new(common.Hash)
 	rand.Read(token[:])
 
+	diff := new(common.Hash)
+	diff[0] = 127
+
 	b := &Block{
 		Header: BlockHeader{
 			PreviousHash: common.SHA2Hash(token[:]),
-			// MerkleRootHash	: GetMerkleRootHash(transactions),
-			Difficulty: 0,
+			//MerkleRootHash: MerkleRootHash(tx),
+			Difficulty: *diff,
 			Nonce:      0,
 			Timestamp:  common.MakeTimestamp(),
 			Index:      0,
 		},
 		Body: BlockBody{
-		// Transactions : append(Transactions, NewTransaction(/*Parameters*/)),
+			Transactions: nil,
 		},
 	}
+
+	tx := NewTransaction(0, new(common.Address), 50)
+	b.AddTransaction(tx)
 
 	return b
 }
@@ -92,6 +99,7 @@ func AppendBlockchain() *Blockchain {
 		BlockchainHeight: 1, // uint64(len([]Block{*b})), // always 1
 		GenesisBlock:     b,
 		CandidateBlock:   cb,
+		TotalAmount:      50,
 	}
 	return bc
 }
@@ -121,6 +129,12 @@ func (bc *Blockchain) String() string {
 	fmt.Fprintf(res, "\nID     %v\n", bc.ID)
 	fmt.Fprintf(res, "Height %v\n\n", bc.BlockchainHeight)
 	fmt.Fprintf(res, "Genesis Block \n%v\n", bc.GenesisBlock.String("Genesis"))
+	i := 1
+	for _, b := range bc.Blocks[1:] {
+		fmt.Fprintf(res, "Block %d %v\n", i, b.String(""))
+		i = i + 1
+	}
 	fmt.Fprintf(res, "Candidate Block \n%v", bc.CandidateBlock.String("Candidate"))
+
 	return res.String()
 }

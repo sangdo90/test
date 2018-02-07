@@ -6,6 +6,7 @@ import (
 
 	"github.com/smartm2m/blockchain/common"
 	"github.com/smartm2m/blockchain/core"
+	"github.com/smartm2m/blockchain/validate"
 	"github.com/smartm2m/chainutil/console/command"
 	"github.com/smartm2m/chainutil/log"
 )
@@ -143,6 +144,8 @@ func NewBlockchain() error {
 
 	bc := core.AppendBlockchain()
 	bc.RegisterBlockchain()
+	mr, _ := validate.MerkleRootHash(bc.GenesisBlock)
+	bc.GenesisBlock.Header.MerkleRootHash = common.BytesToHash(mr)
 	log.Debug("Create completed")
 
 	return nil
@@ -343,6 +346,11 @@ func NewTransactionInCandidateBlock(bcid uint64, amount uint64, from uint64, to 
 
 	t := core.NewTransaction(from, &toa, amount)
 	bc.CandidateBlock.AddTransaction(t)
+
+	mr, _ := validate.MerkleRootHash(bc.CandidateBlock)
+	bc.CandidateBlock.Header.MerkleRootHash = common.BytesToHash(mr)
+	log.Info(mr)
+
 	log.Debug("Amount : " + amounts + "\tFrom : " + froms + "\tTo : " + tos)
 	log.Debug("Create completed")
 	log.Debug(common.PerforatedLine)
