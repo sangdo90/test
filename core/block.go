@@ -13,7 +13,8 @@ type BlockHeader struct {
 	Index        uint64
 }
 
-func (bh *BlockHeader) toBytes() []byte {
+// ToBytes returns a slice of bytes of BlockHeader.
+func (bh *BlockHeader) ToBytes() []byte {
 	res := make([]byte, 0)
 
 	tb := make([]byte, binary.MaxVarintLen64)
