@@ -8,7 +8,7 @@ import (
 // GlobalBlockchains is set of all blockchains.
 var GlobalBlockchains []*Blockchain
 
-// Blockchain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
+// Blockchain is chain of blocks, consisting of Blocks, Height, Genesisblcok, and CurrentBlock.
 type Blockchain struct {
 	Blocks           []Block
 	BlockchainHeight uint64
