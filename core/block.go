@@ -54,3 +54,9 @@ func NewBlock(pb *Block) *Block {
 	}
 	return b
 }
+
+// AddTransaction adds a transaction.
+func (b *Block) AddTransaction(t *Transaction) error {
+	b.Body.Transactions = append(b.Body.Transactions, t)
+	return nil
+}

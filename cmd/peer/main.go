@@ -17,6 +17,7 @@ func main() {
 func RegisterCommand() {
 	execute.BlockchainCommands()
 	execute.BlockCommands()
+	execute.TransactionCommands()
 	_ = command.AddCommand("", command.Command{
 		Name:        "quit",
 		ShortName:   "q",
