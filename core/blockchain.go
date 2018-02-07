@@ -11,7 +11,6 @@ var GlobalBlockchains []*Blockchain
 // Blockchain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
 // ID is the same as index+1
 type Blockchain struct {
-	ID               uint64
 	Blocks           []Block
 	BlockchainHeight uint64
 	GenesisBlock     *Block
@@ -45,7 +44,6 @@ func AppendBlockchain(bc *Blockchain) error {
 func NewBlockchain() *Blockchain {
 	b := newGenesisBlock()
 	bc := &Blockchain{
-		ID:               0, // init value
 		Blocks:           []Block{*b},
 		BlockchainHeight: 1, // uint64(len([]Block{*b})), // always 1
 		GenesisBlock:     b,

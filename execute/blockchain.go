@@ -12,7 +12,7 @@ import (
 
 const perforatedLine string = "-----------------------------------------------------"
 
-// BlockchainCommands is ...
+// BlockchainCommands contains block commands.
 func BlockchainCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "blockchain",
@@ -27,12 +27,12 @@ func BlockchainCommands() {
 				Run:         NewBlockchain,
 			},
 			command.Command{
-				Name:        "list",
-				ShortName:   "ls",
-				Description: "show blockchains list",
+				Name:        "number",
+				ShortName:   "num",
+				Description: "show the number of blockchains",
 				Commands:    make([]command.Command, 0),
 				Flags:       nil,
-				Run:         ShowBlockchainsList,
+				Run:         ShowNumberofBlockchains,
 			},
 			command.Command{
 				Name:          "info",
@@ -62,10 +62,10 @@ func NewBlockchain() error {
 	return nil
 }
 
-// ShowBlockchainsList shows list of blockchains
-// ''ShowBlockchainsList()''
-func ShowBlockchainsList() error {
-	log.Debug("Show Blockchains List")
+// ShowNumberofBlockchains shows the number of blockchains
+// ''ShowNumberofBlockchains()''
+func ShowNumberofBlockchains() error {
+	log.Debug("Show Number of Blockchains")
 	log.Info(perforatedLine)
 
 	result := ""
@@ -80,11 +80,11 @@ func ShowBlockchainsList() error {
 
 // ShowBlockchainInformation shows information of blockchain identified by a ID.
 // Therefore, ShowBlockchainInformation requires a blockchain ID
-// ''ShowBlockchainInformation(bcid uint64)''
-func ShowBlockchainInformation(bcid uint64) error {
+// ''ShowBlockchainInformation(bcidx uint64)''
+func ShowBlockchainInformation(bcidx uint64) error {
 	log.Debug("Show Blockchain Information")
 	log.Info(perforatedLine)
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -97,18 +97,17 @@ func ShowBlockchainInformation(bcid uint64) error {
 }
 
 // getBlockchain gets blockchain
-func getBlockchain(bcid uint64) (*core.Blockchain, error) {
-	if bcid <= 0 && bcid > uint64(len(core.GlobalBlockchains)) {
+func getBlockchain(bcidx uint64) (*core.Blockchain, error) {
+	if bcidx < 0 && bcidx > uint64(len(core.GlobalBlockchains)-1) {
 		return nil, errors.New("Invalid Select Blockchain")
 	}
 
-	return core.GlobalBlockchains[bcid-1], nil
+	return core.GlobalBlockchains[bcidx], nil
 }
 
 // blockchainStringInfo provides information(string) about the blockchain.
 func blockchainStringInfo(bc *core.Blockchain, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
-	fmt.Fprintf(buffer, "\nID     %v\n", bc.ID)
 	fmt.Fprintf(buffer, "Height %v\n\n", bc.BlockchainHeight)
 	fmt.Fprintf(buffer, "%v\n", blockStringInfo(bc.GenesisBlock, "Genesis Block"))
 	fmt.Fprintf(buffer, "%v", blockStringInfo(bc.CandidateBlock, "Candidate Block"))

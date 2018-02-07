@@ -11,7 +11,7 @@ import (
 	"github.com/smartm2m/chainutil/log"
 )
 
-// BlockchainCommands is ...
+// BlockCommands contains block commands.
 func BlockCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "block",
@@ -57,18 +57,18 @@ func BlockCommands() {
 }
 
 // ShowBlocksList shows list of block
-// ''ShowBlocksList(bcid uint64)''
-func ShowBlocksList(bcid uint64) error {
+// ''ShowBlocksList(bcidx uint64)''
+func ShowBlocksList(bcidx uint64) error {
 	log.Debug("Show Blocks List")
 	log.Info(perforatedLine)
 
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
 	}
 
-	log.Info("Blockchain ID : " + strconv.FormatUint(bcid, 10))
+	log.Info("Blockchain idx : " + strconv.FormatUint(bcidx, 10))
 
 	for idx, b := range bc.Blocks {
 		i := strconv.Itoa(idx)
@@ -80,14 +80,14 @@ func ShowBlocksList(bcid uint64) error {
 }
 
 // ShowBlockInformation shows information of block
-// ''ShowBlockInformation(bcid uint64, bidx uint64)''
-func ShowBlockInformation(bcid uint64, bidx uint64) error {
+// ''ShowBlockInformation(bcidx uint64, bidx uint64)''
+func ShowBlockInformation(bcidx uint64, bidx uint64) error {
 	log.Debug("Show Block Information")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
+	bcidxs := strconv.FormatUint(bcidx, 10)
 	bidxs := strconv.FormatUint(bidx, 10)
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -104,7 +104,7 @@ func ShowBlockInformation(bcid uint64, bidx uint64) error {
 		b = bc.CandidateBlock
 	}
 
-	log.Info(blockStringInfo(b, "Blockchain ID : "+bcids+"\tBlock Index : "+bidxs))
+	log.Info(blockStringInfo(b, "Blockchain ID : "+bcidxs+"\tBlock Index : "+bidxs))
 	log.Info(perforatedLine)
 
 	return nil
@@ -112,13 +112,13 @@ func ShowBlockInformation(bcid uint64, bidx uint64) error {
 
 // NewCandidateBlock creates a new candidate block into a blockchain identified by a ID.
 // Therefore, NewCandidateBlock requires a blockchain ID
-// ''NewCandidateBlock(bcid uint64)''
-func NewCandidateBlock(bcid uint64) error {
+// ''NewCandidateBlock(bcidx uint64)''
+func NewCandidateBlock(bcidx uint64) error {
 	log.Debug("Create New Candidate Block")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
-	bc, err := getBlockchain(bcid)
+	bcidxs := strconv.FormatUint(bcidx, 10)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func NewCandidateBlock(bcid uint64) error {
 
 	bc.CandidateBlock = core.NewBlock(&bc.Blocks[bc.BlockchainHeight-1])
 
-	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain ID : "+bcids+"'s Candidate Block"))
+	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain ID : "+bcidxs+"'s Candidate Block"))
 	log.Info(perforatedLine)
 	log.Debug("Create completed")
 	return nil
@@ -134,14 +134,14 @@ func NewCandidateBlock(bcid uint64) error {
 
 // AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a ID.
 // Therefore, AttachCandidateBlockToBlockchain requires a blockchain ID
-// ''AttachCandidateBlockToBlockchain(bcid uint64)''
-func AttachCandidateBlockToBlockchain(bcid uint64) error {
+// ''AttachCandidateBlockToBlockchain(bcidx uint64)''
+func AttachCandidateBlockToBlockchain(bcidx uint64) error {
 	log.Debug("Attach Candidate Block to Blockchain")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcid, 10)
-	log.Debug("Blockchain ID : " + bcids)
-	bc, err := getBlockchain(bcid)
+	bcidxs := strconv.FormatUint(bcidx, 10)
+	log.Debug("Blockchain index : " + bcidxs)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -153,7 +153,7 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 	return nil
 }
 
-// BlockStringInfo provides information(string) about the block.
+// blockStringInfo provides information(string) about the block.
 func blockStringInfo(b *core.Block, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
 	if b != nil {
