@@ -1,52 +1,42 @@
 package execute
 
 import (
-	"errors"
 	"fmt"
 
+	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/chainutil/console/command"
 	"github.com/smartm2m/chainutil/log"
 )
 
 // ConsensusCommands register commands for consensus.
 func ConsensusCommands() {
-	_ = command.AddCommand("", command.Command{
-		Name:        "consensus",
-		ShortName:   "c",
-		Description: "manage consensus",
-		Commands: []command.Command{
-			command.Command{
-				Name:        "perform",
-				ShortName:   "p",
-				Description: "perform a consensus algorithm.",
-				Commands:    nil,
-				Flags:       nil,
-				Run:         PerformConsensus,
-			},
-			command.Command{
-				Name:        "execute",
-				ShortName:   "e",
-				Description: "execute a test.",
-				Commands:    nil,
-				Flags:       nil,
-				Run:         Execution,
-			},
-		},
-		Flags: nil,
-		Run:   nil,
+	_ = command.AddCommand("blockchain", command.Command{
+		Name:        "copy",
+		ShortName:   "cp",
+		Description: "copy a new blockchain from existing blockchain",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         CopyBlockchain,
 	})
 }
 
-// PerformConsensus performs consensus for blockchains.
-func PerformConsensus(p1, p2, p3 string) error {
-	res := fmt.Sprintf("PerformConsensus(%s,%s,%s)", p1, p2, p3)
-	log.Debug(res)
-
-	if p1 == "2" {
-		return nil
+// Copy a new blockchain from existing blockchain.
+// ''CopyBlockchain(bcid uint64)''
+func CopyBlockchain(bcid uint64) error {
+	bc, _ := core.SelectBlockchain(bcid)
+	nbcid := uint64(len(core.GlobalBlockchains))
+	nbc := new(core.Blockchain)
+	nbc = &core.Blockchain{
+		ID:               nbcid,
+		Blocks:           bc.Blocks,
+		BlockchainHeight: bc.BlockchainHeight,
+		GenesisBlock:     bc.GenesisBlock,
+		CandidateBlock:   bc.CandidateBlock,
+		TotalAmount:      bc.TotalAmount,
 	}
+	nbc.RegisterBlockchain()
 
-	return errors.New("asdf")
+	return nil
 }
 
 // Execution ...
