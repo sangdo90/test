@@ -6,13 +6,6 @@ import (
 	"github.com/smartm2m/blockchain/core"
 )
 
-type PoW struct {
-}
-
-func New() *PoW {
-	return nil
-}
-
 func Mining(b *core.Block) (bool, uint64) {
 	diff := b.Header.Difficulty
 	fmt.Println("PoW Start")

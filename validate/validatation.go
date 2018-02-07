@@ -32,7 +32,7 @@ func MerkleRootHash(b *core.Block) ([]byte, error) {
 	mr := tree.MerkleRoot()
 
 	//Verify a specific content in in the tree
-	//vc := t.VerifyContent(tree.MerkleRoot(), list[0])
+	//vc := tree.VerifyContent(tree.MerkleRoot(), list[0])
 	//fmt.Println("Verify Content: ", vc)
 
 	return mr, nil
