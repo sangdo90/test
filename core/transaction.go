@@ -42,7 +42,7 @@ type txdata struct {
 }
 
 //NewTransaction creates a new transaction.
-func NewTransaction(from Address, to Address, amount uint64) *Transaction {
+func NewTransaction(amount uint64, from Address, to Address) *Transaction {
 	d := txdata{
 		To:     to,
 		Amount: amount,

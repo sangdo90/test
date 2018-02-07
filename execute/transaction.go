@@ -67,7 +67,7 @@ func NewTransactionInCandidateBlock(bcidx uint64, amount uint64, from []byte, to
 		return err
 	}
 
-	t := core.NewTransaction(froma, toa, amount)
+	t := core.NewTransaction(amount, froma, toa)
 	_ = bc.CandidateBlock.AddTransaction(t)
 	log.Info("Amount : " + amounts + "\tFrom : " + froma.ToString() + "\tTo : " + toa.ToString())
 	log.Debug("Create completed")
