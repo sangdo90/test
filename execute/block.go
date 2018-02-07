@@ -12,7 +12,7 @@ import (
 	"github.com/smartm2m/chainutil/log"
 )
 
-// BlockCommands is ...
+// BlockCommands contains block commands.
 func BlockCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "block",
@@ -86,7 +86,7 @@ func ShowBlockInformation(bcidx uint64, bidx uint64) error {
 	log.Debug("Show Block Information")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcidx, 10)
+	bcidxs := strconv.FormatUint(bcidx, 10)
 	bidxs := strconv.FormatUint(bidx, 10)
 	bc, err := getBlockchain(bcidx)
 
@@ -105,7 +105,7 @@ func ShowBlockInformation(bcidx uint64, bidx uint64) error {
 		b = bc.CandidateBlock
 	}
 
-	log.Info(blockStringInfo(b, "Blockchain index : "+bcids+"\tBlock Index : "+bidxs))
+	log.Info(blockStringInfo(b, "Blockchain index : "+bcidxs+"\tBlock Index : "+bidxs))
 	log.Info(perforatedLine)
 
 	return nil
@@ -118,7 +118,7 @@ func NewCandidateBlock(bcidx uint64) error {
 	log.Debug("Create New Candidate Block")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcidx, 10)
+	bcidxs := strconv.FormatUint(bcidx, 10)
 	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
@@ -127,7 +127,7 @@ func NewCandidateBlock(bcidx uint64) error {
 
 	bc.CandidateBlock = core.NewBlock(&bc.Blocks[bc.BlockchainHeight-1])
 
-	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain index : "+bcids+"'s Candidate Block"))
+	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain index : "+bcidxs+"'s Candidate Block"))
 	log.Info(perforatedLine)
 	log.Debug("Create completed")
 	return nil
@@ -140,8 +140,8 @@ func AttachCandidateBlockToBlockchain(bcidx uint64) error {
 	log.Debug("Attach Candidate Block to Blockchain")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcidx, 10)
-	log.Debug("Blockchain index : " + bcids)
+	bcidxs := strconv.FormatUint(bcidx, 10)
+	log.Debug("Blockchain index : " + bcidxs)
 	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
