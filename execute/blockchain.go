@@ -12,7 +12,7 @@ import (
 
 const perforatedLine string = "-----------------------------------------------------"
 
-// BlockchainCommands is ...
+// BlockchainCommands contains block commands.
 func BlockchainCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "blockchain",
@@ -80,11 +80,11 @@ func ShowNumberofBlockchains() error {
 
 // ShowBlockchainInformation shows information of blockchain identified by a ID.
 // Therefore, ShowBlockchainInformation requires a blockchain ID
-// ''ShowBlockchainInformation(bcid uint64)''
-func ShowBlockchainInformation(bcid uint64) error {
+// ''ShowBlockchainInformation(bcidx uint64)''
+func ShowBlockchainInformation(bcidx uint64) error {
 	log.Debug("Show Blockchain Information")
 	log.Info(perforatedLine)
-	bc, err := getBlockchain(bcid)
+	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
 		return err
@@ -97,12 +97,12 @@ func ShowBlockchainInformation(bcid uint64) error {
 }
 
 // getBlockchain gets blockchain
-func getBlockchain(bcid uint64) (*core.Blockchain, error) {
-	if bcid <= 0 && bcid > uint64(len(core.GlobalBlockchains)) {
+func getBlockchain(bcidx uint64) (*core.Blockchain, error) {
+	if bcidx < 0 && bcidx > uint64(len(core.GlobalBlockchains)-1) {
 		return nil, errors.New("Invalid Select Blockchain")
 	}
 
-	return core.GlobalBlockchains[bcid-1], nil
+	return core.GlobalBlockchains[bcidx], nil
 }
 
 // blockchainStringInfo provides information(string) about the blockchain.
