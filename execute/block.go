@@ -104,14 +104,14 @@ func ShowBlockInformation(bcidx uint64, bidx uint64) error {
 		b = bc.CandidateBlock
 	}
 
-	log.Info(blockStringInfo(b, "Blockchain ID : "+bcidxs+"\tBlock Index : "+bidxs))
+	log.Info(blockStringInfo(b, "Blockchain index : "+bcidxs+"\tBlock Index : "+bidxs))
 	log.Info(perforatedLine)
 
 	return nil
 }
 
-// NewCandidateBlock creates a new candidate block into a blockchain identified by a ID.
-// Therefore, NewCandidateBlock requires a blockchain ID
+// NewCandidateBlock creates a new candidate block into a blockchain identified by a index.
+// Therefore, NewCandidateBlock requires a blockchain index
 // ''NewCandidateBlock(bcidx uint64)''
 func NewCandidateBlock(bcidx uint64) error {
 	log.Debug("Create New Candidate Block")
@@ -126,14 +126,14 @@ func NewCandidateBlock(bcidx uint64) error {
 
 	bc.CandidateBlock = core.NewBlock(&bc.Blocks[bc.BlockchainHeight-1])
 
-	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain ID : "+bcidxs+"'s Candidate Block"))
+	log.Info(blockStringInfo(bc.CandidateBlock, "Blockchain index : "+bcidxs+"'s Candidate Block"))
 	log.Info(perforatedLine)
 	log.Debug("Create completed")
 	return nil
 }
 
-// AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a ID.
-// Therefore, AttachCandidateBlockToBlockchain requires a blockchain ID
+// AttachCandidateBlockToBlockchain attach candidate block into a blockchain identified by a index.
+// Therefore, AttachCandidateBlockToBlockchain requires a blockchain index
 // ''AttachCandidateBlockToBlockchain(bcidx uint64)''
 func AttachCandidateBlockToBlockchain(bcidx uint64) error {
 	log.Debug("Attach Candidate Block to Blockchain")

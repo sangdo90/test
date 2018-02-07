@@ -78,8 +78,8 @@ func ShowNumberofBlockchains() error {
 	return nil
 }
 
-// ShowBlockchainInformation shows information of blockchain identified by a ID.
-// Therefore, ShowBlockchainInformation requires a blockchain ID
+// ShowBlockchainInformation shows information of blockchain identified by a index.
+// Therefore, ShowBlockchainInformation requires a blockchain index
 // ''ShowBlockchainInformation(bcidx uint64)''
 func ShowBlockchainInformation(bcidx uint64) error {
 	log.Debug("Show Blockchain Information")

@@ -40,7 +40,7 @@ func TransactionCommands() {
 
 // NewTransactionInCandidateBlock creates a new transaction and put it in a candidate block of blockchain.
 // Also, need to transaction that From A has sent To B.
-// Therefore, NewTransactionInCandidateBlock requires a blockchain ID, From, To(address), Amount.
+// Therefore, NewTransactionInCandidateBlock requires a blockchain index, From, To(address), Amount.
 // ''NewTransactionInCandidateBlock(bcid uint64, amount uint64, from uint64, to *common.Address)''
 func NewTransactionInCandidateBlock(bcid uint64, amount uint64, from []byte, to []byte) error {
 	log.Info("Create New Transaction in the Candidate block")
@@ -60,7 +60,7 @@ func NewTransactionInCandidateBlock(bcid uint64, amount uint64, from []byte, to 
 	copy(toa[:], to[:tl])
 	copy(froma[:], from[:fl])
 
-	log.Debug("Blockchain ID : " + bcids)
+	log.Debug("Blockchain index : " + bcids)
 
 	bc, err := getBlockchain(bcid)
 	if err != nil {
@@ -76,8 +76,8 @@ func NewTransactionInCandidateBlock(bcid uint64, amount uint64, from []byte, to 
 	return nil
 }
 
-// ShowCandidateBlockTransactionsList shows a list of transactions that exist in a blockchain identified by a ID.
-// Therefore, ShowCandidateBlockTransactionsList requires a blockchain ID
+// ShowCandidateBlockTransactionsList shows a list of transactions that exist in a blockchain identified by a index.
+// Therefore, ShowCandidateBlockTransactionsList requires a blockchain index
 // ''ShowCandidateBlockTransactionsList(bcid uint64)''
 func ShowCandidateBlockTransactionsList(bcid uint64) error {
 	log.Info("Show Candidate Block Transactions list")
@@ -92,7 +92,7 @@ func ShowCandidateBlockTransactionsList(bcid uint64) error {
 
 	b := bc.CandidateBlock
 
-	log.Info(transactionsString(b, "Blockchain ID : "+bcids+"'s Candidate Block"))
+	log.Info(transactionsString(b, "Blockchain index : "+bcids+"'s Candidate Block"))
 	log.Info(perforatedLine)
 
 	return nil

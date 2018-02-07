@@ -8,8 +8,7 @@ import (
 // GlobalBlockchains is set of all blockchains.
 var GlobalBlockchains []*Blockchain
 
-// Blockchain is chain of blocks, consisting of ID, Blocks, Height, Genesisblcok, and CurrentBlock.
-// ID is the same as index+1
+// Blockchain is chain of blocks, consisting of Blocks, Height, Genesisblcok, and CurrentBlock.
 type Blockchain struct {
 	Blocks           []Block
 	BlockchainHeight uint64
@@ -38,9 +37,6 @@ func AppendBlockchain(bc *Blockchain) error {
 }
 
 // NewBlockchain creates blockchain.
-// TODO: ID is not updated, needs to modification.
-// TODO: ID should be considered to have a unique value,
-// TODO: even if the blockchain is deleted.
 func NewBlockchain() *Blockchain {
 	b := newGenesisBlock()
 	bc := &Blockchain{
