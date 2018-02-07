@@ -5,7 +5,7 @@ import "fmt"
 // Address represents a address for account.
 type Address [20]byte
 
-//A Transaction consists of ID and txdata.
+//A Transaction consists of from(Address) and txdata.
 type Transaction struct {
 	From Address
 	Data txdata
