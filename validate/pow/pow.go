@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/chainutil/log"
@@ -12,7 +13,7 @@ import (
 // Mining verifies a block for attaching into a blockchain.
 func Mining(b *core.Block) uint64 {
 	diff := b.Header.Difficulty
-	fmt.Println("PoW Start")
+	log.Info("PoW Start")
 	hash := sha256.Sum256(b.Header.ToBytes())
 	i := 1
 	for ; greaterThan(hash, diff); hash, i = sha256.Sum256(b.Header.ToBytes()), i+1 {
@@ -20,11 +21,12 @@ func Mining(b *core.Block) uint64 {
 		log.Debug("Difficulty: " + hashToString(diff))
 		log.Debug("Block Hash: " + hashToString(hash))
 		b.Header.Nonce = b.Header.Nonce + 1
+		time.Sleep(300 * time.Millisecond)
 
 	}
-	log.Debug("Tried: " + strconv.Itoa(i))
-	log.Debug("Difficulty: " + hashToString(diff))
-	log.Debug("Block Hash: " + hashToString(hash))
+	log.Info("Tried: " + strconv.Itoa(i))
+	log.Info("Difficulty: " + hashToString(diff))
+	log.Info("Block Hash: " + hashToString(hash))
 
 	return b.Header.Nonce
 }
