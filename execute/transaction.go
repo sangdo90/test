@@ -83,7 +83,7 @@ func ShowCandidateBlockTransactionsList(bcidx uint64) error {
 	log.Info("Show Candidate Block Transactions list")
 	log.Info(perforatedLine)
 
-	bcids := strconv.FormatUint(bcidx, 10)
+	bcidxs := strconv.FormatUint(bcidx, 10)
 	bc, err := getBlockchain(bcidx)
 
 	if err != nil {
@@ -92,7 +92,7 @@ func ShowCandidateBlockTransactionsList(bcidx uint64) error {
 
 	b := bc.CandidateBlock
 
-	log.Info(transactionsString(b, "Blockchain index : "+bcids+"'s Candidate Block"))
+	log.Info(transactionsString(b, "Blockchain index : "+bcidxs+"'s Candidate Block"))
 	log.Info(perforatedLine)
 
 	return nil
