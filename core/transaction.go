@@ -1,6 +1,8 @@
 package core
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Address represents a address for account.
 type Address [20]byte
@@ -9,6 +11,19 @@ type Address [20]byte
 type Transaction struct {
 	From Address
 	Data txdata
+}
+
+// ToBytes returns a slice of bytes of Transaction
+func (t *Transaction) ToBytes() []byte {
+	res := t.From[:]
+	res = append(res, t.Data.To[:]...)
+	buf := make([]byte, 8)
+	mask := uint64(0xff)
+	for i := 0; i < len(buf); i++ {
+		buf[i] = byte((t.Data.Amount >> uint(56-(8*i))) & mask)
+	}
+	res = append(res, buf...)
+	return res
 }
 
 // ToString returns a hex string for account address

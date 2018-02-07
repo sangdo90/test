@@ -11,7 +11,7 @@ import (
 	"github.com/smartm2m/chainutil/log"
 )
 
-// BlockchainCommands is ...
+// BlockCommands is ...
 func BlockCommands() {
 	_ = command.AddCommand("", command.Command{
 		Name:        "block",
@@ -161,7 +161,12 @@ func blockStringInfo(b *core.Block, title string) string {
 		for _, v := range b.Header.PreviousHash {
 			ph += fmt.Sprintf("%02x", v)
 		}
+		mh := ""
+		for _, v := range b.Header.MerkleRootHash {
+			mh += fmt.Sprintf("%02x", v)
+		}
 		fmt.Fprintf(buffer, "PreviousHash     %v\n", ph)
+		fmt.Fprintf(buffer, "MerkleRootHash   %v\n", mh)
 		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
 		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
 		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))

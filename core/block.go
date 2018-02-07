@@ -4,13 +4,16 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"time"
+
+	"github.com/smartm2m/blockchain/validate"
 )
 
 // A BlockHeader is the header of block, which contains the information of the block.
 type BlockHeader struct {
-	PreviousHash [32]byte
-	Timestamp    int64
-	Index        uint64
+	PreviousHash   [32]byte
+	MerkleRootHash [32]byte
+	Timestamp      int64
+	Index          uint64
 }
 
 func (bh *BlockHeader) toBytes() []byte {
@@ -58,5 +61,10 @@ func NewBlock(pb *Block) *Block {
 // AddTransaction adds a transaction.
 func (b *Block) AddTransaction(t *Transaction) error {
 	b.Body.Transactions = append(b.Body.Transactions, t)
+	tb := make([][]byte, 0)
+	for _, v := range b.Body.Transactions {
+		tb = append(tb, v.ToBytes())
+	}
+	b.Header.MerkleRootHash = validate.MerkleRootHash(tb)
 	return nil
 }
