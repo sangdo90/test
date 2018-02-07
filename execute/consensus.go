@@ -37,9 +37,9 @@ func ConsensusCommands() {
 }
 
 // CopyBlockchain duplicates a existing blockchain.
-func CopyBlockchain(bcid uint64) error {
+func CopyBlockchain(bcidx uint64) error {
 	log.Debug("CopyBlockchain")
-	bc, _ := getBlockchain(bcid)
+	bc, _ := getBlockchain(bcidx)
 	blocks := make([]core.Block, len(bc.Blocks))
 	copy(blocks, bc.Blocks)
 	nbc := &core.Blockchain{
