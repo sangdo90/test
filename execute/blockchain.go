@@ -10,7 +10,7 @@ import (
 	"github.com/smartm2m/chainutil/log"
 )
 
-const perforatedLine string = "\n-----------------------------------------------------\n"
+const perforatedLine string = "-----------------------------------------------------"
 
 // BlockchainCommands is ...
 func BlockchainCommands() {
@@ -69,9 +69,8 @@ func ShowBlockchainsList() error {
 	log.Info(perforatedLine)
 
 	result := ""
-	for _, bc := range core.GlobalBlockchains {
-		result += fmt.Sprintf("%v ", bc.ID)
-	}
+
+	result += fmt.Sprintf("Discovered blockchains: %v ", len(core.GlobalBlockchains))
 
 	log.Info(result)
 	log.Info(perforatedLine)
@@ -99,7 +98,7 @@ func ShowBlockchainInformation(bcid uint64) error {
 
 // getBlockchain gets blockchain
 func getBlockchain(bcid uint64) (*core.Blockchain, error) {
-	if bcid > uint64(len(core.GlobalBlockchains)) {
+	if bcid <= 0 && bcid > uint64(len(core.GlobalBlockchains)) {
 		return nil, errors.New("Invalid Select Blockchain")
 	}
 

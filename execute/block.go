@@ -147,7 +147,7 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 		return err
 	}
 
-	bc.AddBlock()
+	_ = bc.AddBlock()
 	log.Info(perforatedLine)
 	log.Debug("Attach completed")
 	return nil
@@ -157,7 +157,11 @@ func AttachCandidateBlockToBlockchain(bcid uint64) error {
 func blockStringInfo(b *core.Block, title string) string {
 	buffer := bytes.NewBuffer([]byte{})
 	if b != nil {
-		fmt.Fprintf(buffer, "PreviousHash     %v\n", b.Header.PreviousHash)
+		ph := ""
+		for _, v := range b.Header.PreviousHash {
+			ph += fmt.Sprintf("%02x", v)
+		}
+		fmt.Fprintf(buffer, "PreviousHash     %v\n", ph)
 		fmt.Fprintf(buffer, "Timestamp        %v\n", b.Header.Timestamp)
 		fmt.Fprintf(buffer, "Index            %v\n", b.Header.Index)
 		fmt.Fprintf(buffer, "Transactions     %v\n", len(b.Body.Transactions))
