@@ -1,35 +1,34 @@
 package execute
 
 import (
-	"errors"
-	"fmt"
-
+	"github.com/smartm2m/blockchain/consensus"
+	"github.com/smartm2m/blockchain/core"
 	"github.com/smartm2m/chainutil/console/command"
 	"github.com/smartm2m/chainutil/log"
 )
 
 // ConsensusCommands register commands for consensus.
 func ConsensusCommands() {
+	_ = command.AddCommand("blockchain", command.Command{
+		Name:        "copy",
+		ShortName:   "cp",
+		Description: ": copy a new blockchain from existing blockchain",
+		Commands:    make([]command.Command, 0),
+		Flags:       nil,
+		Run:         CopyBlockchain,
+	})
 	_ = command.AddCommand("", command.Command{
 		Name:        "consensus",
-		ShortName:   "c",
-		Description: "manage consensus",
+		ShortName:   "cs",
+		Description: ": consent then choose a blockchain from different blockchains",
 		Commands: []command.Command{
 			command.Command{
-				Name:        "perform",
-				ShortName:   "p",
-				Description: "perform a consensus algorithm.",
-				Commands:    nil,
-				Flags:       nil,
-				Run:         PerformConsensus,
-			},
-			command.Command{
 				Name:        "execute",
-				ShortName:   "e",
-				Description: "execute a test.",
-				Commands:    nil,
+				ShortName:   "exec",
+				Description: ": execute consensus",
+				Commands:    make([]command.Command, 0),
 				Flags:       nil,
-				Run:         Execution,
+				Run:         Consensus,
 			},
 		},
 		Flags: nil,
@@ -37,21 +36,35 @@ func ConsensusCommands() {
 	})
 }
 
-// PerformConsensus performs consensus for blockchains.
-func PerformConsensus(p1, p2, p3 string) error {
-	res := fmt.Sprintf("PerformConsensus(%s,%s,%s)", p1, p2, p3)
-	log.Debug(res)
-
-	if p1 == "2" {
-		return nil
+// CopyBlockchain duplicates a existing blockchain.
+func CopyBlockchain(bcidx uint64) error {
+	log.Debug("CopyBlockchain")
+	bc, _ := getBlockchain(bcidx)
+	blocks := make([]core.Block, len(bc.Blocks))
+	copy(blocks, bc.Blocks)
+	nbc := &core.Blockchain{
+		Blocks:           blocks,
+		BlockchainHeight: bc.BlockchainHeight,
+		GenesisBlock:     bc.GenesisBlock,
+		CandidateBlock:   nil,
 	}
 
-	return errors.New("asdf")
+	core.AppendBlockchain(nbc)
+
+	return nil
 }
 
-// Execution ...
-func Execution(p1 string, p2 int, p3 uint64, p4 int64, p5 []byte) error {
-	res := fmt.Sprintf("Execution(%s,%v,%v,%v,%v)", p1, p2, p3, p4, p5)
-	log.Debug(res)
+// Consensus chooses a blockchain among discovered blockchains.
+func Consensus() error {
+	log.Debug("ExecuteConsensus")
+	var err error
+	core.GlobalBlockchains, err = consensus.Consensus(core.GlobalBlockchains)
+
+	if err != nil {
+		log.Error(err.Error())
+	} else {
+		log.Info(blockchainStringInfo(core.GlobalBlockchains[0], "The longest blockchain"))
+	}
+
 	return nil
 }

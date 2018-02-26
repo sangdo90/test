@@ -1,23 +1,48 @@
 package core
 
 import (
-	"github.com/smartm2m/blockchain/common"
+	"fmt"
 )
 
-//A txdata consists of Recipient, Amount, Payload and Description.
-type txdata struct {
-	To     *common.Address
-	Amount uint64
-}
+// Address represents a address for account.
+type Address [20]byte
 
-//A Transaction consists of ID and txdata.
+//A Transaction consists of from(Address) and txdata.
 type Transaction struct {
-	From uint64
+	From Address
 	Data txdata
 }
 
+// ToBytes returns a slice of bytes of Transaction
+func (t *Transaction) ToBytes() []byte {
+	res := t.From[:]
+	res = append(res, t.Data.To[:]...)
+	buf := make([]byte, 8)
+	mask := uint64(0xff)
+	for i := 0; i < len(buf); i++ {
+		buf[i] = byte((t.Data.Amount >> uint(56-(8*i))) & mask)
+	}
+	res = append(res, buf...)
+	return res
+}
+
+// ToString returns a hex string for account address
+func (a Address) ToString() string {
+	res := "0x"
+	for _, v := range a {
+		res += fmt.Sprintf("%02x", v)
+	}
+
+	return res
+}
+
+type txdata struct {
+	To     Address
+	Amount uint64
+}
+
 //NewTransaction creates a new transaction.
-func NewTransaction(from uint64, to *common.Address, amount uint64) *Transaction {
+func NewTransaction(amount uint64, from Address, to Address) *Transaction {
 	d := txdata{
 		To:     to,
 		Amount: amount,
